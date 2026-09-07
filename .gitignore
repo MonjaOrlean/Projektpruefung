@@ -1,0 +1,25 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+npm-debug.log*
+
+# Spring Boot / Maven
+target/
+*.log
+
+# Tauri / Rust
+src-tauri/target/
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Windows
+Thumbs.db
+Desktop.ini
