@@ -1,0 +1,35 @@
+### Alle Mitglieder laden
+GET http://localhost:8080/api/mitglieder
+
+
+### Mitglied mit ID 1 laden
+GET http://localhost:8080/api/mitglieder/1
+
+
+### Mitglied mit ID 1 bearbeiten
+PUT http://localhost:8080/api/mitglieder/1
+Content-Type: application/json
+
+{
+  "vorname": "Anna",
+  "nachname": "Musterfrau",
+  "email": "anna.musterfrau@example.de",
+  "telefon": "0987654321",
+  "aktiv": true
+}
+
+
+### Mitglied mit ID 1 löschen
+DELETE http://localhost:8080/api/mitglieder/1
+
+
+### Ungültiges Mitglied testen
+POST http://localhost:8080/api/mitglieder
+Content-Type: application/json
+
+{
+  "vorname": "",
+  "nachname": "",
+  "email": "keine-gueltige-mail",
+  "telefon": "12345"
+}

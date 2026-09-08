@@ -1,0 +1,207 @@
+<div class="mitglieder-seite">
+
+  <h1>Mitgliederverwaltung</h1>
+
+  <section class="formular-bereich">
+
+    <h2>Neues Mitglied</h2>
+
+    <form (ngSubmit)="mitgliedAnlegen()">
+
+      <div class="formular-gruppe">
+        <label for="vorname">Vorname</label>
+        <input
+          id="vorname"
+          name="vorname"
+          type="text"
+          [(ngModel)]="neuesMitglied.vorname"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="nachname">Nachname</label>
+        <input
+          id="nachname"
+          name="nachname"
+          type="text"
+          [(ngModel)]="neuesMitglied.nachname"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="email">E-Mail</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          [(ngModel)]="neuesMitglied.email"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="telefon">Telefon</label>
+        <input
+          id="telefon"
+          name="telefon"
+          type="text"
+          [(ngModel)]="neuesMitglied.telefon"
+        >
+      </div>
+
+      <button type="submit">
+        Mitglied anlegen
+      </button>
+
+    </form>
+
+  </section>
+
+  <section
+    class="formular-bereich"
+    *ngIf="bearbeitetesMitglied"
+  >
+
+    <h2>Mitglied bearbeiten</h2>
+
+    <form (ngSubmit)="mitgliedSpeichern()">
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-vorname">Vorname</label>
+        <input
+          id="bearbeiten-vorname"
+          name="bearbeitenVorname"
+          type="text"
+          [(ngModel)]="bearbeitetesMitglied.vorname"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-nachname">Nachname</label>
+        <input
+          id="bearbeiten-nachname"
+          name="bearbeitenNachname"
+          type="text"
+          [(ngModel)]="bearbeitetesMitglied.nachname"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-email">E-Mail</label>
+        <input
+          id="bearbeiten-email"
+          name="bearbeitenEmail"
+          type="email"
+          [(ngModel)]="bearbeitetesMitglied.email"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-telefon">Telefon</label>
+        <input
+          id="bearbeiten-telefon"
+          name="bearbeitenTelefon"
+          type="text"
+          [(ngModel)]="bearbeitetesMitglied.telefon"
+        >
+      </div>
+
+      <div class="formular-gruppe checkbox-gruppe">
+        <label>
+          <input
+            type="checkbox"
+            name="bearbeitenAktiv"
+            [(ngModel)]="bearbeitetesMitglied.aktiv"
+          >
+          Mitglied aktiv
+        </label>
+      </div>
+
+      <div class="button-gruppe">
+
+        <button type="submit">
+          Änderungen speichern
+        </button>
+
+        <button
+          type="button"
+          class="abbrechen"
+          (click)="bearbeitungAbbrechen()"
+        >
+          Abbrechen
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="listen-bereich">
+
+    <h2>Mitglieder</h2>
+
+    <p *ngIf="mitglieder.length === 0">
+      Es sind noch keine Mitglieder vorhanden.
+    </p>
+
+    <table *ngIf="mitglieder.length > 0">
+
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>E-Mail</th>
+        <th>Telefon</th>
+        <th>Status</th>
+        <th>Aktionen</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <tr *ngFor="let mitglied of mitglieder">
+
+        <td>{{ mitglied.id }}</td>
+        <td>{{ mitglied.vorname }}</td>
+        <td>{{ mitglied.nachname }}</td>
+        <td>{{ mitglied.email }}</td>
+        <td>{{ mitglied.telefon }}</td>
+
+        <td>
+          {{ mitglied.aktiv ? 'Aktiv' : 'Inaktiv' }}
+        </td>
+
+        <td class="aktionen">
+
+          <button
+            type="button"
+            class="bearbeiten"
+            (click)="bearbeitungStarten(mitglied)"
+          >
+            Bearbeiten
+          </button>
+
+          <button
+            type="button"
+            class="loeschen"
+            (click)="mitgliedLoeschen(mitglied.id)"
+          >
+            Löschen
+          </button>
+
+        </td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </section>
+
+</div>
