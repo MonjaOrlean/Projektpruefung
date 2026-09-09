@@ -1,0 +1,44 @@
+### Alle Aufgaben laden
+GET http://localhost:8080/api/aufgaben
+
+
+### Aufgabe anlegen
+POST http://localhost:8080/api/aufgaben
+Content-Type: application/json
+
+{
+  "titel": "Getränke bestellen",
+  "beschreibung": "Getränke für die Veranstaltung bestellen",
+  "veranstaltungId": 1
+}
+
+
+### Aufgabe mit ID 1 laden
+GET http://localhost:8080/api/aufgaben/1
+
+
+### Aufgabe mit ID 1 bearbeiten
+PUT http://localhost:8080/api/aufgaben/1
+Content-Type: application/json
+
+{
+  "titel": "Getränke und Eis bestellen",
+  "beschreibung": "Getränke und Eis für die Veranstaltung bestellen",
+  "erledigt": true,
+  "veranstaltungId": 1
+}
+
+
+### Ungültige Aufgabe testen
+POST http://localhost:8080/api/aufgaben
+Content-Type: application/json
+
+{
+  "titel": "",
+  "beschreibung": "Dieser Test soll fehlschlagen",
+  "veranstaltungId": 1
+}
+
+
+### Aufgabe mit ID 1 löschen
+DELETE http://localhost:8080/api/aufgaben/1

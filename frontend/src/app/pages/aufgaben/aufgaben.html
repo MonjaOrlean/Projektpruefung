@@ -1,0 +1,262 @@
+<div class="aufgaben-seite">
+
+  <h1>Aufgabenverwaltung</h1>
+
+  <div
+    class="fehlermeldung"
+    *ngIf="fehlermeldung"
+  >
+    {{ fehlermeldung }}
+  </div>
+
+  <section class="formular-bereich">
+
+    <h2>Neue Aufgabe</h2>
+
+    <form (ngSubmit)="aufgabeAnlegen()">
+
+      <div class="formular-gruppe">
+        <label for="titel">Titel</label>
+
+        <input
+          id="titel"
+          name="titel"
+          type="text"
+          [(ngModel)]="neueAufgabe.titel"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="beschreibung">Beschreibung</label>
+
+        <textarea
+          id="beschreibung"
+          name="beschreibung"
+          rows="4"
+          [(ngModel)]="neueAufgabe.beschreibung"
+        ></textarea>
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="veranstaltung">
+          Veranstaltung
+        </label>
+
+        <select
+          id="veranstaltung"
+          name="veranstaltung"
+          [(ngModel)]="neueAufgabe.veranstaltungId"
+        >
+
+          <option [ngValue]="null">
+            Keine Veranstaltung
+          </option>
+
+          <option
+            *ngFor="let veranstaltung of veranstaltungen"
+            [ngValue]="veranstaltung.id"
+          >
+            {{ veranstaltung.name }}
+            - {{ veranstaltung.datum }}
+          </option>
+
+        </select>
+      </div>
+
+      <button type="submit">
+        Aufgabe anlegen
+      </button>
+
+    </form>
+
+  </section>
+
+  <section
+    class="formular-bereich"
+    *ngIf="bearbeiteteAufgabe"
+  >
+
+    <h2>Aufgabe bearbeiten</h2>
+
+    <form (ngSubmit)="aufgabeSpeichern()">
+
+      <div class="formular-gruppe">
+
+        <label for="bearbeiten-titel">
+          Titel
+        </label>
+
+        <input
+          id="bearbeiten-titel"
+          name="bearbeitenTitel"
+          type="text"
+          [(ngModel)]="bearbeiteteAufgabe.titel"
+          required
+        >
+
+      </div>
+
+      <div class="formular-gruppe">
+
+        <label for="bearbeiten-beschreibung">
+          Beschreibung
+        </label>
+
+        <textarea
+          id="bearbeiten-beschreibung"
+          name="bearbeitenBeschreibung"
+          rows="4"
+          [(ngModel)]="bearbeiteteAufgabe.beschreibung"
+        ></textarea>
+
+      </div>
+
+      <div class="formular-gruppe">
+
+        <label for="bearbeiten-veranstaltung">
+          Veranstaltung
+        </label>
+
+        <select
+          id="bearbeiten-veranstaltung"
+          name="bearbeitenVeranstaltung"
+          [(ngModel)]="bearbeiteteAufgabe.veranstaltungId"
+        >
+
+          <option [ngValue]="null">
+            Keine Veranstaltung
+          </option>
+
+          <option
+            *ngFor="let veranstaltung of veranstaltungen"
+            [ngValue]="veranstaltung.id"
+          >
+            {{ veranstaltung.name }}
+            - {{ veranstaltung.datum }}
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="formular-gruppe checkbox-gruppe">
+
+        <label>
+
+          <input
+            type="checkbox"
+            name="bearbeitenErledigt"
+            [(ngModel)]="bearbeiteteAufgabe.erledigt"
+          >
+
+          Aufgabe erledigt
+
+        </label>
+
+      </div>
+
+      <div class="button-gruppe">
+
+        <button type="submit">
+          Änderungen speichern
+        </button>
+
+        <button
+          type="button"
+          class="abbrechen"
+          (click)="bearbeitungAbbrechen()"
+        >
+          Abbrechen
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="listen-bereich">
+
+    <h2>Aufgaben</h2>
+
+    <p *ngIf="aufgaben.length === 0">
+      Es sind noch keine Aufgaben vorhanden.
+    </p>
+
+    <table *ngIf="aufgaben.length > 0">
+
+      <thead>
+
+      <tr>
+        <th>ID</th>
+        <th>Titel</th>
+        <th>Beschreibung</th>
+        <th>Veranstaltung</th>
+        <th>Status</th>
+        <th>Aktionen</th>
+      </tr>
+
+      </thead>
+
+      <tbody>
+
+      <tr *ngFor="let aufgabe of aufgaben">
+
+        <td>
+          {{ aufgabe.id }}
+        </td>
+
+        <td>
+          {{ aufgabe.titel }}
+        </td>
+
+        <td>
+          {{ aufgabe.beschreibung || '-' }}
+        </td>
+
+        <td>
+
+            <span *ngIf="aufgabe.veranstaltung">
+              {{ aufgabe.veranstaltung.name }}
+            </span>
+
+          <span *ngIf="!aufgabe.veranstaltung">
+              Keine
+            </span>
+
+        </td>
+
+        <td>
+          {{ aufgabe.erledigt ? 'Erledigt' : 'Offen' }}
+        </td>
+
+        <td class="aktionen">
+
+          <button
+            type="button"
+            class="bearbeiten"
+            (click)="bearbeitungStarten(aufgabe)"
+          >
+            Bearbeiten
+          </button>
+
+          <button
+            type="button"
+            class="loeschen"
+            (click)="aufgabeLoeschen(aufgabe.id)"
+          >
+            Löschen
+          </button>
+
+        </td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </section>
+
+</div>

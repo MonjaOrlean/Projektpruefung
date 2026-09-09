@@ -1,0 +1,22 @@
+.hauptnavigation {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ddd;
+
+  a {
+    padding: 0.7rem 1rem;
+    text-decoration: none;
+    color: #222;
+    border-radius: 4px;
+  }
+
+  a:hover {
+    background: #eeeeee;
+  }
+
+  a.aktiv {
+    font-weight: 600;
+    background: #dddddd;
+  }
+}

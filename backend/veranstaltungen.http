@@ -1,0 +1,65 @@
+### Veranstaltung anlegen
+POST http://localhost:8080/api/veranstaltungen
+Content-Type: application/json
+
+{
+  "name": "Sommerfest",
+  "datum": "2026-09-20",
+  "startzeit": "14:00:00",
+  "endzeit": "22:00:00",
+  "ort": "Vereinsgelände",
+  "beschreibung": "Sommerfest des Vereins"
+}
+
+### Alle Veranstaltungen laden
+GET http://localhost:8080/api/veranstaltungen
+
+
+### Veranstaltung mit ID 1 laden
+GET http://localhost:8080/api/veranstaltungen/1
+
+
+### Veranstaltung mit ID 1 bearbeiten
+PUT http://localhost:8080/api/veranstaltungen/1
+Content-Type: application/json
+
+{
+  "name": "Sommerfest 2026",
+  "datum": "2026-09-20",
+  "startzeit": "15:00:00",
+  "endzeit": "23:00:00",
+  "ort": "Vereinsgelände",
+  "beschreibung": "Aktualisiertes Sommerfest des Vereins",
+  "aktiv": true
+}
+
+
+### Veranstaltung mit ID 1 löschen
+DELETE http://localhost:8080/api/veranstaltungen/1
+
+
+### Ungültige Veranstaltung testen
+POST http://localhost:8080/api/veranstaltungen
+Content-Type: application/json
+
+{
+  "name": "",
+  "datum": null,
+  "startzeit": "14:00:00",
+  "endzeit": "22:00:00",
+  "ort": "Vereinsgelände",
+  "beschreibung": "Test"
+}
+
+### Ungültige Zeitspanne testen
+POST http://localhost:8080/api/veranstaltungen
+Content-Type: application/json
+
+{
+  "name": "Fehlerhafte Veranstaltung",
+  "datum": "2026-09-25",
+  "startzeit": "18:00:00",
+  "endzeit": "14:00:00",
+  "ort": "Vereinsgelände",
+  "beschreibung": "Dieser Eintrag soll wegen der Uhrzeiten abgelehnt werden."
+}

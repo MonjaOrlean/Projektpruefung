@@ -1,0 +1,255 @@
+<div class="veranstaltungen-seite">
+
+  <h1>Veranstaltungsverwaltung</h1>
+
+  <div
+    class="fehlermeldung"
+    *ngIf="fehlermeldung"
+  >
+    {{ fehlermeldung }}
+  </div>
+
+  <section class="formular-bereich">
+
+    <h2>Neue Veranstaltung</h2>
+
+    <form (ngSubmit)="veranstaltungAnlegen()">
+
+      <div class="formular-gruppe">
+        <label for="name">Name</label>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          [(ngModel)]="neueVeranstaltung.name"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="datum">Datum</label>
+        <input
+          id="datum"
+          name="datum"
+          type="date"
+          [(ngModel)]="neueVeranstaltung.datum"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="startzeit">Startzeit</label>
+        <input
+          id="startzeit"
+          name="startzeit"
+          type="time"
+          [(ngModel)]="neueVeranstaltung.startzeit"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="endzeit">Endzeit</label>
+        <input
+          id="endzeit"
+          name="endzeit"
+          type="time"
+          [(ngModel)]="neueVeranstaltung.endzeit"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="ort">Ort</label>
+        <input
+          id="ort"
+          name="ort"
+          type="text"
+          [(ngModel)]="neueVeranstaltung.ort"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="beschreibung">Beschreibung</label>
+        <textarea
+          id="beschreibung"
+          name="beschreibung"
+          rows="4"
+          [(ngModel)]="neueVeranstaltung.beschreibung"
+        ></textarea>
+      </div>
+
+      <button type="submit">
+        Veranstaltung anlegen
+      </button>
+
+    </form>
+
+  </section>
+
+  <section
+    class="formular-bereich"
+    *ngIf="bearbeiteteVeranstaltung"
+  >
+
+    <h2>Veranstaltung bearbeiten</h2>
+
+    <form (ngSubmit)="veranstaltungSpeichern()">
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-name">Name</label>
+        <input
+          id="bearbeiten-name"
+          name="bearbeitenName"
+          type="text"
+          [(ngModel)]="bearbeiteteVeranstaltung.name"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-datum">Datum</label>
+        <input
+          id="bearbeiten-datum"
+          name="bearbeitenDatum"
+          type="date"
+          [(ngModel)]="bearbeiteteVeranstaltung.datum"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-startzeit">Startzeit</label>
+        <input
+          id="bearbeiten-startzeit"
+          name="bearbeitenStartzeit"
+          type="time"
+          [(ngModel)]="bearbeiteteVeranstaltung.startzeit"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-endzeit">Endzeit</label>
+        <input
+          id="bearbeiten-endzeit"
+          name="bearbeitenEndzeit"
+          type="time"
+          [(ngModel)]="bearbeiteteVeranstaltung.endzeit"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-ort">Ort</label>
+        <input
+          id="bearbeiten-ort"
+          name="bearbeitenOrt"
+          type="text"
+          [(ngModel)]="bearbeiteteVeranstaltung.ort"
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-beschreibung">Beschreibung</label>
+        <textarea
+          id="bearbeiten-beschreibung"
+          name="bearbeitenBeschreibung"
+          rows="4"
+          [(ngModel)]="bearbeiteteVeranstaltung.beschreibung"
+        ></textarea>
+      </div>
+
+      <div class="formular-gruppe checkbox-gruppe">
+        <label>
+          <input
+            type="checkbox"
+            name="bearbeitenAktiv"
+            [(ngModel)]="bearbeiteteVeranstaltung.aktiv"
+          >
+          Veranstaltung aktiv
+        </label>
+      </div>
+
+      <div class="button-gruppe">
+
+        <button type="submit">
+          Änderungen speichern
+        </button>
+
+        <button
+          type="button"
+          class="abbrechen"
+          (click)="bearbeitungAbbrechen()"
+        >
+          Abbrechen
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="listen-bereich">
+
+    <h2>Veranstaltungen</h2>
+
+    <p *ngIf="veranstaltungen.length === 0">
+      Es sind noch keine Veranstaltungen vorhanden.
+    </p>
+
+    <table *ngIf="veranstaltungen.length > 0">
+
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Datum</th>
+        <th>Start</th>
+        <th>Ende</th>
+        <th>Ort</th>
+        <th>Status</th>
+        <th>Aktionen</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <tr *ngFor="let veranstaltung of veranstaltungen">
+
+        <td>{{ veranstaltung.id }}</td>
+        <td>{{ veranstaltung.name }}</td>
+        <td>{{ veranstaltung.datum }}</td>
+        <td>{{ veranstaltung.startzeit }}</td>
+        <td>{{ veranstaltung.endzeit }}</td>
+        <td>{{ veranstaltung.ort }}</td>
+        <td>
+          {{ veranstaltung.aktiv ? 'Aktiv' : 'Inaktiv' }}
+        </td>
+
+        <td class="aktionen">
+
+          <button
+            type="button"
+            class="bearbeiten"
+            (click)="bearbeitungStarten(veranstaltung)"
+          >
+            Bearbeiten
+          </button>
+
+          <button
+            type="button"
+            class="loeschen"
+            (click)="veranstaltungLoeschen(veranstaltung.id)"
+          >
+            Löschen
+          </button>
+
+        </td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </section>
+
+</div>
