@@ -1,0 +1,70 @@
+### Alle Schichten laden
+GET http://localhost:8080/api/schichten
+
+
+### Schicht anlegen
+POST http://localhost:8080/api/schichten
+Content-Type: application/json
+
+{
+  "name": "Getränkestand",
+  "datum": "2026-09-20",
+  "startzeit": "14:00:00",
+  "endzeit": "18:00:00",
+  "benoetigtePersonen": 3,
+  "beschreibung": "Betreuung des Getränkestands",
+  "veranstaltungId": 1
+}
+
+
+### Schicht mit ID 1 laden
+GET http://localhost:8080/api/schichten/1
+
+
+### Schicht mit ID 1 bearbeiten
+PUT http://localhost:8080/api/schichten/1
+Content-Type: application/json
+
+{
+  "name": "Getränkestand Nachmittag",
+  "datum": "2026-09-20",
+  "startzeit": "15:00:00",
+  "endzeit": "19:00:00",
+  "benoetigtePersonen": 4,
+  "beschreibung": "Betreuung des Getränkestands am Nachmittag",
+  "veranstaltungId": 1
+}
+
+
+### Ungültige Zeitspanne testen
+POST http://localhost:8080/api/schichten
+Content-Type: application/json
+
+{
+  "name": "Fehlerhafte Schicht",
+  "datum": "2026-09-20",
+  "startzeit": "18:00:00",
+  "endzeit": "14:00:00",
+  "benoetigtePersonen": 2,
+  "beschreibung": "Dieser Test soll fehlschlagen",
+  "veranstaltungId": 1
+}
+
+
+### Ungültige Personenanzahl testen
+POST http://localhost:8080/api/schichten
+Content-Type: application/json
+
+{
+  "name": "Fehlerhafte Schicht",
+  "datum": "2026-09-20",
+  "startzeit": "14:00:00",
+  "endzeit": "18:00:00",
+  "benoetigtePersonen": 0,
+  "beschreibung": "Dieser Test soll ebenfalls fehlschlagen",
+  "veranstaltungId": 1
+}
+
+
+### Schicht mit ID 1 löschen
+DELETE http://localhost:8080/api/schichten/1

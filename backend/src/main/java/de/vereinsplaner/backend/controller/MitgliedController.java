@@ -27,14 +27,18 @@ public class MitgliedController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Mitglied> mitgliedNachIdLaden(@PathVariable Long id) {
+    public ResponseEntity<Mitglied> mitgliedNachIdLaden(
+            @PathVariable Long id
+    ) {
         return mitgliedService.mitgliedNachIdLaden(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Mitglied mitgliedAnlegen(@Valid @RequestBody MitgliedCreateDto dto) {
+    public Mitglied mitgliedAnlegen(
+            @Valid @RequestBody MitgliedCreateDto dto
+    ) {
 
         Mitglied mitglied = new Mitglied();
 
@@ -50,7 +54,8 @@ public class MitgliedController {
     @PutMapping("/{id}")
     public ResponseEntity<Mitglied> mitgliedBearbeiten(
             @PathVariable Long id,
-            @Valid @RequestBody MitgliedUpdateDto dto) {
+            @Valid @RequestBody MitgliedUpdateDto dto
+    ) {
 
         return mitgliedService.mitgliedNachIdLaden(id)
                 .map(vorhandenesMitglied -> {
@@ -62,7 +67,9 @@ public class MitgliedController {
                     vorhandenesMitglied.setAktiv(dto.isAktiv());
 
                     Mitglied gespeichert =
-                            mitgliedService.mitgliedSpeichern(vorhandenesMitglied);
+                            mitgliedService.mitgliedSpeichern(
+                                    vorhandenesMitglied
+                            );
 
                     return ResponseEntity.ok(gespeichert);
                 })
@@ -70,9 +77,14 @@ public class MitgliedController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> mitgliedLoeschen(@PathVariable Long id) {
+    public ResponseEntity<Void> mitgliedLoeschen(
+            @PathVariable Long id
+    ) {
 
-        if (mitgliedService.mitgliedNachIdLaden(id).isEmpty()) {
+        if (mitgliedService
+                .mitgliedNachIdLaden(id)
+                .isEmpty()) {
+
             return ResponseEntity.notFound().build();
         }
 

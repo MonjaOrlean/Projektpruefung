@@ -1,0 +1,342 @@
+<div class="schichten-seite">
+
+  <h1>Schichtenverwaltung</h1>
+
+  <div
+    class="fehlermeldung"
+    *ngIf="fehlermeldung"
+  >
+    {{ fehlermeldung }}
+  </div>
+
+  <section class="formular-bereich">
+
+    <h2>Neue Schicht</h2>
+
+    <form (ngSubmit)="schichtAnlegen()">
+
+      <div class="formular-gruppe">
+        <label for="name">Name</label>
+
+        <input
+          id="name"
+          name="name"
+          type="text"
+          [(ngModel)]="neueSchicht.name"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="datum">Datum</label>
+
+        <input
+          id="datum"
+          name="datum"
+          type="date"
+          [(ngModel)]="neueSchicht.datum"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="startzeit">Startzeit</label>
+
+        <input
+          id="startzeit"
+          name="startzeit"
+          type="time"
+          [(ngModel)]="neueSchicht.startzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="endzeit">Endzeit</label>
+
+        <input
+          id="endzeit"
+          name="endzeit"
+          type="time"
+          [(ngModel)]="neueSchicht.endzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="benoetigtePersonen">
+          Benötigte Personen
+        </label>
+
+        <input
+          id="benoetigtePersonen"
+          name="benoetigtePersonen"
+          type="number"
+          min="1"
+          [(ngModel)]="neueSchicht.benoetigtePersonen"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="veranstaltung">
+          Veranstaltung
+        </label>
+
+        <select
+          id="veranstaltung"
+          name="veranstaltung"
+          [(ngModel)]="neueSchicht.veranstaltungId"
+        >
+          <option [ngValue]="null">
+            Keine Veranstaltung
+          </option>
+
+          <option
+            *ngFor="let veranstaltung of veranstaltungen"
+            [ngValue]="veranstaltung.id"
+          >
+            {{ veranstaltung.name }}
+            - {{ veranstaltung.datum }}
+          </option>
+        </select>
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="beschreibung">
+          Beschreibung
+        </label>
+
+        <textarea
+          id="beschreibung"
+          name="beschreibung"
+          rows="4"
+          [(ngModel)]="neueSchicht.beschreibung"
+        ></textarea>
+      </div>
+
+      <button type="submit">
+        Schicht anlegen
+      </button>
+
+    </form>
+
+  </section>
+
+  <section
+    class="formular-bereich"
+    *ngIf="bearbeiteteSchicht"
+  >
+
+    <h2>Schicht bearbeiten</h2>
+
+    <form (ngSubmit)="schichtSpeichern()">
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-name">
+          Name
+        </label>
+
+        <input
+          id="bearbeiten-name"
+          name="bearbeitenName"
+          type="text"
+          [(ngModel)]="bearbeiteteSchicht.name"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-datum">
+          Datum
+        </label>
+
+        <input
+          id="bearbeiten-datum"
+          name="bearbeitenDatum"
+          type="date"
+          [(ngModel)]="bearbeiteteSchicht.datum"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-startzeit">
+          Startzeit
+        </label>
+
+        <input
+          id="bearbeiten-startzeit"
+          name="bearbeitenStartzeit"
+          type="time"
+          [(ngModel)]="bearbeiteteSchicht.startzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-endzeit">
+          Endzeit
+        </label>
+
+        <input
+          id="bearbeiten-endzeit"
+          name="bearbeitenEndzeit"
+          type="time"
+          [(ngModel)]="bearbeiteteSchicht.endzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-benoetigtePersonen">
+          Benötigte Personen
+        </label>
+
+        <input
+          id="bearbeiten-benoetigtePersonen"
+          name="bearbeitenBenoetigtePersonen"
+          type="number"
+          min="1"
+          [(ngModel)]="bearbeiteteSchicht.benoetigtePersonen"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-veranstaltung">
+          Veranstaltung
+        </label>
+
+        <select
+          id="bearbeiten-veranstaltung"
+          name="bearbeitenVeranstaltung"
+          [(ngModel)]="bearbeiteteSchicht.veranstaltungId"
+        >
+          <option [ngValue]="null">
+            Keine Veranstaltung
+          </option>
+
+          <option
+            *ngFor="let veranstaltung of veranstaltungen"
+            [ngValue]="veranstaltung.id"
+          >
+            {{ veranstaltung.name }}
+            - {{ veranstaltung.datum }}
+          </option>
+        </select>
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-beschreibung">
+          Beschreibung
+        </label>
+
+        <textarea
+          id="bearbeiten-beschreibung"
+          name="bearbeitenBeschreibung"
+          rows="4"
+          [(ngModel)]="bearbeiteteSchicht.beschreibung"
+        ></textarea>
+      </div>
+
+      <div class="button-gruppe">
+
+        <button type="submit">
+          Änderungen speichern
+        </button>
+
+        <button
+          type="button"
+          class="abbrechen"
+          (click)="bearbeitungAbbrechen()"
+        >
+          Abbrechen
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="listen-bereich">
+
+    <h2>Schichten</h2>
+
+    <p *ngIf="schichten.length === 0">
+      Es sind noch keine Schichten vorhanden.
+    </p>
+
+    <table *ngIf="schichten.length > 0">
+
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Datum</th>
+        <th>Start</th>
+        <th>Ende</th>
+        <th>Benötigt</th>
+        <th>Veranstaltung</th>
+        <th>Aktionen</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <tr *ngFor="let schicht of schichten">
+
+        <td>{{ schicht.id }}</td>
+
+        <td>{{ schicht.name }}</td>
+
+        <td>{{ schicht.datum }}</td>
+
+        <td>{{ schicht.startzeit }}</td>
+
+        <td>{{ schicht.endzeit }}</td>
+
+        <td>{{ schicht.benoetigtePersonen }}</td>
+
+        <td>
+
+            <span *ngIf="schicht.veranstaltung">
+              {{ schicht.veranstaltung.name }}
+            </span>
+
+          <span *ngIf="!schicht.veranstaltung">
+              Keine
+            </span>
+
+        </td>
+
+        <td class="aktionen">
+
+          <button
+            type="button"
+            class="bearbeiten"
+            (click)="bearbeitungStarten(schicht)"
+          >
+            Bearbeiten
+          </button>
+
+          <button
+            type="button"
+            class="loeschen"
+            (click)="schichtLoeschen(schicht.id)"
+          >
+            Löschen
+          </button>
+
+        </td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </section>
+
+</div>
