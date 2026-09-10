@@ -4,9 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { Schicht } from '../../models/schicht';
 import { Veranstaltung } from '../../models/veranstaltung';
+import { Mitglied } from '../../models/mitglied';
+
+import {
+  SchichtBesetzungsstatus,
+  SchichtZuweisung
+} from '../../models/schicht-zuweisung';
 
 import { SchichtService } from '../../services/schicht.service';
 import { VeranstaltungService } from '../../services/veranstaltung.service';
+import { MitgliedService } from '../../services/mitglied.service';
+import { SchichtZuweisungService } from '../../services/schicht-zuweisung.service';
 
 @Component({
   selector: 'app-schichten',
@@ -20,11 +28,31 @@ import { VeranstaltungService } from '../../services/veranstaltung.service';
 })
 export class Schichten implements OnInit {
 
-  private readonly schichtService = inject(SchichtService);
-  private readonly veranstaltungService = inject(VeranstaltungService);
+  private readonly schichtService =
+    inject(SchichtService);
+
+  private readonly veranstaltungService =
+    inject(VeranstaltungService);
+
+  private readonly mitgliedService =
+    inject(MitgliedService);
+
+  private readonly schichtZuweisungService =
+    inject(SchichtZuweisungService);
 
   schichten: Schicht[] = [];
   veranstaltungen: Veranstaltung[] = [];
+  mitglieder: Mitglied[] = [];
+
+  zuweisungen: SchichtZuweisung[] = [];
+
+  besetzungsstatus: {
+    [schichtId: number]: SchichtBesetzungsstatus;
+  } = {};
+
+  ausgewaehltesMitglied: {
+    [schichtId: number]: number | null;
+  } = {};
 
   neueSchicht = {
     name: '',
@@ -52,17 +80,30 @@ export class Schichten implements OnInit {
   ngOnInit(): void {
     this.schichtenLaden();
     this.veranstaltungenLaden();
+    this.mitgliederLaden();
+    this.zuweisungenLaden();
   }
 
   schichtenLaden(): void {
+
     this.schichtService
       .alleSchichtenLaden()
       .subscribe({
         next: (daten) => {
+
           this.schichten = daten;
+
+          this.schichten.forEach(schicht => {
+
+            if (schicht.id !== undefined) {
+              this.besetzungsstatusLaden(schicht.id);
+            }
+
+          });
         },
 
         error: (fehler) => {
+
           console.error(
             'Schichten konnten nicht geladen werden:',
             fehler
@@ -75,6 +116,7 @@ export class Schichten implements OnInit {
   }
 
   veranstaltungenLaden(): void {
+
     this.veranstaltungService
       .alleVeranstaltungenLaden()
       .subscribe({
@@ -91,11 +133,180 @@ export class Schichten implements OnInit {
       });
   }
 
+  mitgliederLaden(): void {
+
+    this.mitgliedService
+      .alleMitgliederLaden()
+      .subscribe({
+        next: (daten) => {
+          this.mitglieder = daten;
+        },
+
+        error: (fehler) => {
+          console.error(
+            'Mitglieder konnten nicht geladen werden:',
+            fehler
+          );
+        }
+      });
+  }
+
+  zuweisungenLaden(): void {
+
+    this.schichtZuweisungService
+      .alleZuweisungenLaden()
+      .subscribe({
+        next: (daten) => {
+          this.zuweisungen = daten;
+        },
+
+        error: (fehler) => {
+          console.error(
+            'Zuweisungen konnten nicht geladen werden:',
+            fehler
+          );
+        }
+      });
+  }
+
+  besetzungsstatusLaden(
+    schichtId: number
+  ): void {
+
+    this.schichtZuweisungService
+      .besetzungsstatusLaden(schichtId)
+      .subscribe({
+        next: (status) => {
+
+          this.besetzungsstatus[schichtId] =
+            status;
+        },
+
+        error: (fehler) => {
+          console.error(
+            'Besetzungsstatus konnte nicht geladen werden:',
+            fehler
+          );
+        }
+      });
+  }
+
+  mitgliedZuweisen(
+    schichtId: number
+  ): void {
+
+    this.fehlermeldung = '';
+
+    const mitgliedId =
+      this.ausgewaehltesMitglied[schichtId];
+
+    if (
+      mitgliedId === null ||
+      mitgliedId === undefined
+    ) {
+
+      this.fehlermeldung =
+        'Bitte wähle ein Mitglied aus.';
+
+      return;
+    }
+
+    this.schichtZuweisungService
+      .zuweisungAnlegen(
+        schichtId,
+        mitgliedId
+      )
+      .subscribe({
+        next: () => {
+
+          this.ausgewaehltesMitglied[schichtId] =
+            null;
+
+          this.zuweisungenLaden();
+
+          this.besetzungsstatusLaden(
+            schichtId
+          );
+        },
+
+        error: (fehler) => {
+
+          console.error(
+            'Mitglied konnte nicht zugewiesen werden:',
+            fehler
+          );
+
+          if (fehler.status === 400) {
+
+            if (typeof fehler.error === 'string') {
+              this.fehlermeldung =
+                fehler.error;
+            } else {
+              this.fehlermeldung =
+                'Das Mitglied konnte nicht zugewiesen werden.';
+            }
+
+          } else {
+
+            this.fehlermeldung =
+              'Das Mitglied konnte nicht zugewiesen werden.';
+          }
+        }
+      });
+  }
+
+  zuweisungLoeschen(
+    zuweisungId: number,
+    schichtId: number
+  ): void {
+
+    this.fehlermeldung = '';
+
+    this.schichtZuweisungService
+      .zuweisungLoeschen(zuweisungId)
+      .subscribe({
+        next: () => {
+
+          this.zuweisungenLaden();
+
+          this.besetzungsstatusLaden(
+            schichtId
+          );
+        },
+
+        error: (fehler) => {
+
+          console.error(
+            'Zuweisung konnte nicht gelöscht werden:',
+            fehler
+          );
+
+          this.fehlermeldung =
+            'Die Zuweisung konnte nicht gelöscht werden.';
+        }
+      });
+  }
+
+  zuweisungenFuerSchicht(
+    schichtId?: number
+  ): SchichtZuweisung[] {
+
+    if (schichtId === undefined) {
+      return [];
+    }
+
+    return this.zuweisungen.filter(
+      zuweisung =>
+        zuweisung.schicht.id === schichtId
+    );
+  }
+
   schichtAnlegen(): void {
 
     this.fehlermeldung = '';
 
     if (!this.neueSchicht.name.trim()) {
+
       this.fehlermeldung =
         'Bitte gib einen Namen für die Schicht ein.';
 
@@ -103,6 +314,7 @@ export class Schichten implements OnInit {
     }
 
     if (!this.neueSchicht.datum) {
+
       this.fehlermeldung =
         'Bitte wähle ein Datum aus.';
 
@@ -110,6 +322,7 @@ export class Schichten implements OnInit {
     }
 
     if (!this.neueSchicht.startzeit) {
+
       this.fehlermeldung =
         'Bitte gib eine Startzeit ein.';
 
@@ -117,6 +330,7 @@ export class Schichten implements OnInit {
     }
 
     if (!this.neueSchicht.endzeit) {
+
       this.fehlermeldung =
         'Bitte gib eine Endzeit ein.';
 
@@ -127,13 +341,17 @@ export class Schichten implements OnInit {
       this.neueSchicht.endzeit <
       this.neueSchicht.startzeit
     ) {
+
       this.fehlermeldung =
         'Die Endzeit darf nicht vor der Startzeit liegen.';
 
       return;
     }
 
-    if (this.neueSchicht.benoetigtePersonen < 1) {
+    if (
+      this.neueSchicht.benoetigtePersonen < 1
+    ) {
+
       this.fehlermeldung =
         'Es muss mindestens eine Person benötigt werden.';
 
@@ -141,7 +359,9 @@ export class Schichten implements OnInit {
     }
 
     this.schichtService
-      .schichtAnlegen(this.neueSchicht)
+      .schichtAnlegen(
+        this.neueSchicht
+      )
       .subscribe({
         next: () => {
 
@@ -167,31 +387,50 @@ export class Schichten implements OnInit {
 
           if (fehler.status === 400) {
 
-            if (fehler.error?.zeitspanneGueltig) {
+            if (
+              fehler.error?.zeitspanneGueltig
+            ) {
+
               this.fehlermeldung =
                 fehler.error.zeitspanneGueltig;
-            }
-            else if (fehler.error?.name) {
+
+            } else if (
+              fehler.error?.name
+            ) {
+
               this.fehlermeldung =
                 fehler.error.name;
-            }
-            else if (fehler.error?.datum) {
+
+            } else if (
+              fehler.error?.datum
+            ) {
+
               this.fehlermeldung =
                 fehler.error.datum;
-            }
-            else if (fehler.error?.startzeit) {
+
+            } else if (
+              fehler.error?.startzeit
+            ) {
+
               this.fehlermeldung =
                 fehler.error.startzeit;
-            }
-            else if (fehler.error?.endzeit) {
+
+            } else if (
+              fehler.error?.endzeit
+            ) {
+
               this.fehlermeldung =
                 fehler.error.endzeit;
-            }
-            else if (fehler.error?.benoetigtePersonen) {
+
+            } else if (
+              fehler.error?.benoetigtePersonen
+            ) {
+
               this.fehlermeldung =
                 fehler.error.benoetigtePersonen;
-            }
-            else {
+
+            } else {
+
               this.fehlermeldung =
                 'Bitte überprüfe deine Eingaben.';
             }
@@ -205,7 +444,9 @@ export class Schichten implements OnInit {
       });
   }
 
-  bearbeitungStarten(schicht: Schicht): void {
+  bearbeitungStarten(
+    schicht: Schicht
+  ): void {
 
     this.fehlermeldung = '';
 
@@ -229,7 +470,9 @@ export class Schichten implements OnInit {
   }
 
   bearbeitungAbbrechen(): void {
+
     this.fehlermeldung = '';
+
     this.bearbeiteteSchicht = null;
   }
 
@@ -241,7 +484,10 @@ export class Schichten implements OnInit {
       return;
     }
 
-    if (!this.bearbeiteteSchicht.name.trim()) {
+    if (
+      !this.bearbeiteteSchicht.name.trim()
+    ) {
+
       this.fehlermeldung =
         'Bitte gib einen Namen für die Schicht ein.';
 
@@ -249,6 +495,7 @@ export class Schichten implements OnInit {
     }
 
     if (!this.bearbeiteteSchicht.datum) {
+
       this.fehlermeldung =
         'Bitte wähle ein Datum aus.';
 
@@ -256,6 +503,7 @@ export class Schichten implements OnInit {
     }
 
     if (!this.bearbeiteteSchicht.startzeit) {
+
       this.fehlermeldung =
         'Bitte gib eine Startzeit ein.';
 
@@ -263,6 +511,7 @@ export class Schichten implements OnInit {
     }
 
     if (!this.bearbeiteteSchicht.endzeit) {
+
       this.fehlermeldung =
         'Bitte gib eine Endzeit ein.';
 
@@ -273,6 +522,7 @@ export class Schichten implements OnInit {
       this.bearbeiteteSchicht.endzeit <
       this.bearbeiteteSchicht.startzeit
     ) {
+
       this.fehlermeldung =
         'Die Endzeit darf nicht vor der Startzeit liegen.';
 
@@ -280,8 +530,10 @@ export class Schichten implements OnInit {
     }
 
     if (
-      this.bearbeiteteSchicht.benoetigtePersonen < 1
+      this.bearbeiteteSchicht
+        .benoetigtePersonen < 1
     ) {
+
       this.fehlermeldung =
         'Es muss mindestens eine Person benötigt werden.';
 
@@ -294,18 +546,27 @@ export class Schichten implements OnInit {
         {
           name:
           this.bearbeiteteSchicht.name,
+
           datum:
           this.bearbeiteteSchicht.datum,
+
           startzeit:
           this.bearbeiteteSchicht.startzeit,
+
           endzeit:
           this.bearbeiteteSchicht.endzeit,
+
           benoetigtePersonen:
-          this.bearbeiteteSchicht.benoetigtePersonen,
+          this.bearbeiteteSchicht
+            .benoetigtePersonen,
+
           beschreibung:
-          this.bearbeiteteSchicht.beschreibung,
+          this.bearbeiteteSchicht
+            .beschreibung,
+
           veranstaltungId:
-          this.bearbeiteteSchicht.veranstaltungId
+          this.bearbeiteteSchicht
+            .veranstaltungId
         }
       )
       .subscribe({
@@ -325,31 +586,15 @@ export class Schichten implements OnInit {
 
           if (fehler.status === 400) {
 
-            if (fehler.error?.zeitspanneGueltig) {
+            if (
+              fehler.error?.zeitspanneGueltig
+            ) {
+
               this.fehlermeldung =
                 fehler.error.zeitspanneGueltig;
-            }
-            else if (fehler.error?.name) {
-              this.fehlermeldung =
-                fehler.error.name;
-            }
-            else if (fehler.error?.datum) {
-              this.fehlermeldung =
-                fehler.error.datum;
-            }
-            else if (fehler.error?.startzeit) {
-              this.fehlermeldung =
-                fehler.error.startzeit;
-            }
-            else if (fehler.error?.endzeit) {
-              this.fehlermeldung =
-                fehler.error.endzeit;
-            }
-            else if (fehler.error?.benoetigtePersonen) {
-              this.fehlermeldung =
-                fehler.error.benoetigtePersonen;
-            }
-            else {
+
+            } else {
+
               this.fehlermeldung =
                 'Bitte überprüfe deine Eingaben.';
             }
@@ -363,7 +608,9 @@ export class Schichten implements OnInit {
       });
   }
 
-  schichtLoeschen(id?: number): void {
+  schichtLoeschen(
+    id?: number
+  ): void {
 
     this.fehlermeldung = '';
 
@@ -375,7 +622,10 @@ export class Schichten implements OnInit {
       .schichtLoeschen(id)
       .subscribe({
         next: () => {
+
           this.schichtenLaden();
+
+          this.zuweisungenLaden();
         },
 
         error: (fehler) => {

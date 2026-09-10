@@ -1,0 +1,290 @@
+<div class="verfuegbarkeiten-seite">
+
+  <h1>Verfügbarkeiten</h1>
+
+  <div
+    class="fehlermeldung"
+    *ngIf="fehlermeldung"
+  >
+    {{ fehlermeldung }}
+  </div>
+
+  <section class="formular-bereich">
+
+    <h2>Neue Verfügbarkeit</h2>
+
+    <form (ngSubmit)="verfuegbarkeitAnlegen()">
+
+      <div class="formular-gruppe">
+        <label for="mitglied">
+          Mitglied
+        </label>
+
+        <select
+          id="mitglied"
+          name="mitglied"
+          [(ngModel)]="neueVerfuegbarkeit.mitgliedId"
+          required
+        >
+          <option [ngValue]="null">
+            Bitte auswählen
+          </option>
+
+          <option
+            *ngFor="let mitglied of mitglieder"
+            [ngValue]="mitglied.id"
+          >
+            {{ mitglied.vorname }}
+            {{ mitglied.nachname }}
+          </option>
+        </select>
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="datum">
+          Datum
+        </label>
+
+        <input
+          id="datum"
+          name="datum"
+          type="date"
+          [(ngModel)]="neueVerfuegbarkeit.datum"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="startzeit">
+          Startzeit
+        </label>
+
+        <input
+          id="startzeit"
+          name="startzeit"
+          type="time"
+          [(ngModel)]="neueVerfuegbarkeit.startzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="endzeit">
+          Endzeit
+        </label>
+
+        <input
+          id="endzeit"
+          name="endzeit"
+          type="time"
+          [(ngModel)]="neueVerfuegbarkeit.endzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bemerkung">
+          Bemerkung
+        </label>
+
+        <textarea
+          id="bemerkung"
+          name="bemerkung"
+          rows="4"
+          [(ngModel)]="neueVerfuegbarkeit.bemerkung"
+        ></textarea>
+      </div>
+
+      <button type="submit">
+        Verfügbarkeit anlegen
+      </button>
+
+    </form>
+
+  </section>
+
+  <section
+    class="formular-bereich"
+    *ngIf="bearbeiteteVerfuegbarkeit"
+  >
+
+    <h2>Verfügbarkeit bearbeiten</h2>
+
+    <form (ngSubmit)="verfuegbarkeitSpeichern()">
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-mitglied">
+          Mitglied
+        </label>
+
+        <select
+          id="bearbeiten-mitglied"
+          name="bearbeitenMitglied"
+          [(ngModel)]="bearbeiteteVerfuegbarkeit.mitgliedId"
+          required
+        >
+          <option
+            *ngFor="let mitglied of mitglieder"
+            [ngValue]="mitglied.id"
+          >
+            {{ mitglied.vorname }}
+            {{ mitglied.nachname }}
+          </option>
+        </select>
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-datum">
+          Datum
+        </label>
+
+        <input
+          id="bearbeiten-datum"
+          name="bearbeitenDatum"
+          type="date"
+          [(ngModel)]="bearbeiteteVerfuegbarkeit.datum"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-startzeit">
+          Startzeit
+        </label>
+
+        <input
+          id="bearbeiten-startzeit"
+          name="bearbeitenStartzeit"
+          type="time"
+          [(ngModel)]="bearbeiteteVerfuegbarkeit.startzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-endzeit">
+          Endzeit
+        </label>
+
+        <input
+          id="bearbeiten-endzeit"
+          name="bearbeitenEndzeit"
+          type="time"
+          [(ngModel)]="bearbeiteteVerfuegbarkeit.endzeit"
+          required
+        >
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-bemerkung">
+          Bemerkung
+        </label>
+
+        <textarea
+          id="bearbeiten-bemerkung"
+          name="bearbeitenBemerkung"
+          rows="4"
+          [(ngModel)]="bearbeiteteVerfuegbarkeit.bemerkung"
+        ></textarea>
+      </div>
+
+      <div class="button-gruppe">
+
+        <button type="submit">
+          Änderungen speichern
+        </button>
+
+        <button
+          type="button"
+          class="abbrechen"
+          (click)="bearbeitungAbbrechen()"
+        >
+          Abbrechen
+        </button>
+
+      </div>
+
+    </form>
+
+  </section>
+
+  <section class="listen-bereich">
+
+    <h2>Gespeicherte Verfügbarkeiten</h2>
+
+    <p *ngIf="verfuegbarkeiten.length === 0">
+      Es sind noch keine Verfügbarkeiten vorhanden.
+    </p>
+
+    <table *ngIf="verfuegbarkeiten.length > 0">
+
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Mitglied</th>
+        <th>Datum</th>
+        <th>Start</th>
+        <th>Ende</th>
+        <th>Bemerkung</th>
+        <th>Aktionen</th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <tr *ngFor="let verfuegbarkeit of verfuegbarkeiten">
+
+        <td>
+          {{ verfuegbarkeit.id }}
+        </td>
+
+        <td>
+          {{ verfuegbarkeit.mitglied.vorname }}
+          {{ verfuegbarkeit.mitglied.nachname }}
+        </td>
+
+        <td>
+          {{ verfuegbarkeit.datum }}
+        </td>
+
+        <td>
+          {{ verfuegbarkeit.startzeit }}
+        </td>
+
+        <td>
+          {{ verfuegbarkeit.endzeit }}
+        </td>
+
+        <td>
+          {{ verfuegbarkeit.bemerkung || '-' }}
+        </td>
+
+        <td class="aktionen">
+
+          <button
+            type="button"
+            class="bearbeiten"
+            (click)="bearbeitungStarten(verfuegbarkeit)"
+          >
+            Bearbeiten
+          </button>
+
+          <button
+            type="button"
+            class="loeschen"
+            (click)="verfuegbarkeitLoeschen(verfuegbarkeit.id)"
+          >
+            Löschen
+          </button>
+
+        </td>
+
+      </tr>
+
+      </tbody>
+
+    </table>
+
+  </section>
+
+</div>

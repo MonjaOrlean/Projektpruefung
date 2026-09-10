@@ -1,0 +1,91 @@
+.verfuegbarkeiten-seite {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+h1 {
+  margin-bottom: 2rem;
+}
+
+section {
+  margin-bottom: 3rem;
+}
+
+.formular-bereich {
+  padding: 1.5rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.formular-gruppe {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+
+  label {
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+  }
+
+  input,
+  textarea,
+  select {
+    padding: 0.7rem;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font: inherit;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+button {
+  padding: 0.7rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-gruppe,
+.aktionen {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.bearbeiten {
+  background: #e0e0e0;
+}
+
+.abbrechen {
+  background: #d6d6d6;
+}
+
+.loeschen {
+  background: #f2c6c6;
+}
+
+.fehlermeldung {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #c62828;
+  border-radius: 6px;
+  background: #fdecec;
+  color: #8b0000;
+  font-weight: 600;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.8rem;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+  }
+}

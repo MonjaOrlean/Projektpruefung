@@ -268,74 +268,203 @@
       Es sind noch keine Schichten vorhanden.
     </p>
 
-    <table *ngIf="schichten.length > 0">
+    <div
+      class="schicht-karte"
+      *ngFor="let schicht of schichten"
+    >
 
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Datum</th>
-        <th>Start</th>
-        <th>Ende</th>
-        <th>Benötigt</th>
-        <th>Veranstaltung</th>
-        <th>Aktionen</th>
-      </tr>
-      </thead>
+      <div class="schicht-kopf">
 
-      <tbody>
+        <div>
+          <h3>{{ schicht.name }}</h3>
 
-      <tr *ngFor="let schicht of schichten">
+          <p>
+            {{ schicht.datum }}
+            |
+            {{ schicht.startzeit }}
+            -
+            {{ schicht.endzeit }}
+          </p>
 
-        <td>{{ schicht.id }}</td>
+          <p>
+            Veranstaltung:
+            <strong>
+              {{ schicht.veranstaltung?.name || 'Keine' }}
+            </strong>
+          </p>
+        </div>
 
-        <td>{{ schicht.name }}</td>
+        <div
+          class="besetzungsstatus"
+          *ngIf="
+            schicht.id !== undefined &&
+            besetzungsstatus[schicht.id]
+          "
+        >
 
-        <td>{{ schicht.datum }}</td>
+          <p>
+            Benötigt:
+            <strong>
+              {{
+                besetzungsstatus[schicht.id]
+                  .benoetigtePersonen
+              }}
+            </strong>
+          </p>
 
-        <td>{{ schicht.startzeit }}</td>
+          <p>
+            Zugewiesen:
+            <strong>
+              {{
+                besetzungsstatus[schicht.id]
+                  .zugewiesenePersonen
+              }}
+            </strong>
+          </p>
 
-        <td>{{ schicht.endzeit }}</td>
+          <p>
+            Fehlend:
+            <strong>
+              {{
+                besetzungsstatus[schicht.id]
+                  .fehlendePersonen
+              }}
+            </strong>
+          </p>
 
-        <td>{{ schicht.benoetigtePersonen }}</td>
+          <div
+            class="warnung"
+            *ngIf="
+              besetzungsstatus[schicht.id]
+                .unterbesetzt
+            "
+          >
+            ⚠ Schicht ist unterbesetzt
+          </div>
 
-        <td>
+          <div
+            class="vollbesetzt"
+            *ngIf="
+              !besetzungsstatus[schicht.id]
+                .unterbesetzt
+            "
+          >
+            ✓ Schicht ist ausreichend besetzt
+          </div>
 
-            <span *ngIf="schicht.veranstaltung">
-              {{ schicht.veranstaltung.name }}
-            </span>
+        </div>
 
-          <span *ngIf="!schicht.veranstaltung">
-              Keine
-            </span>
+      </div>
 
-        </td>
+      <div
+        class="beschreibung"
+        *ngIf="schicht.beschreibung"
+      >
+        {{ schicht.beschreibung }}
+      </div>
 
-        <td class="aktionen">
+      <div
+        class="zuweisungs-bereich"
+        *ngIf="schicht.id !== undefined"
+      >
+
+        <h4>Mitglieder zuweisen</h4>
+
+        <div class="zuweisungs-formular">
+
+          <select
+            [name]="'mitglied-' + schicht.id"
+            [(ngModel)]="
+              ausgewaehltesMitglied[schicht.id]
+            "
+          >
+
+            <option [ngValue]="null">
+              Mitglied auswählen
+            </option>
+
+            <option
+              *ngFor="let mitglied of mitglieder"
+              [ngValue]="mitglied.id"
+            >
+              {{ mitglied.vorname }}
+              {{ mitglied.nachname }}
+            </option>
+
+          </select>
 
           <button
             type="button"
-            class="bearbeiten"
-            (click)="bearbeitungStarten(schicht)"
+            (click)="mitgliedZuweisen(schicht.id)"
           >
-            Bearbeiten
+            Zuweisen
           </button>
+
+        </div>
+
+        <h4>Zugewiesene Mitglieder</h4>
+
+        <p
+          *ngIf="
+            zuweisungenFuerSchicht(schicht.id)
+              .length === 0
+          "
+        >
+          Noch keine Mitglieder zugewiesen.
+        </p>
+
+        <div
+          class="zugewiesenes-mitglied"
+          *ngFor="
+            let zuweisung of
+              zuweisungenFuerSchicht(schicht.id)
+          "
+        >
+
+          <span>
+            {{ zuweisung.mitglied.vorname }}
+            {{ zuweisung.mitglied.nachname }}
+          </span>
 
           <button
             type="button"
             class="loeschen"
-            (click)="schichtLoeschen(schicht.id)"
+            *ngIf="zuweisung.id !== undefined"
+            (click)="
+              zuweisungLoeschen(
+                zuweisung.id,
+                schicht.id
+              )
+            "
           >
-            Löschen
+            Entfernen
           </button>
 
-        </td>
+        </div>
 
-      </tr>
+      </div>
 
-      </tbody>
+      <div class="aktionen">
 
-    </table>
+        <button
+          type="button"
+          class="bearbeiten"
+          (click)="bearbeitungStarten(schicht)"
+        >
+          Bearbeiten
+        </button>
+
+        <button
+          type="button"
+          class="loeschen"
+          (click)="schichtLoeschen(schicht.id)"
+        >
+          Schicht löschen
+        </button>
+
+      </div>
+
+    </div>
 
   </section>
 

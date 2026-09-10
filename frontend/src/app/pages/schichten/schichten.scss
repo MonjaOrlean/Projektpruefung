@@ -1,40 +1,70 @@
 .schichten-seite {
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
   padding: 2rem;
 }
 
 h1 {
   margin-bottom: 2rem;
+  font-size: 2.2rem;
+}
+
+h2 {
+  margin-bottom: 1.4rem;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+h4 {
+  margin-top: 1.3rem;
+  margin-bottom: 0.8rem;
 }
 
 section {
   margin-bottom: 3rem;
 }
 
+/* =========================
+   FORMULARE
+   ========================= */
+
 .formular-bereich {
-  padding: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  padding: 1.8rem;
+  border: 1px solid #d4d4d4;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 .formular-gruppe {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 1.2rem;
 
   label {
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.45rem;
     font-weight: 600;
   }
 
   input,
   textarea,
   select {
-    padding: 0.7rem;
-    border: 1px solid #bbb;
-    border-radius: 4px;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid #c8c8c8;
+    border-radius: 8px;
     font: inherit;
+    background: #ffffff;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none;
+    border-color: #777;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
   }
 
   textarea {
@@ -42,50 +72,234 @@ section {
   }
 }
 
+/* =========================
+   BUTTONS
+   ========================= */
+
 button {
-  padding: 0.7rem 1.2rem;
+  padding: 0.75rem 1.2rem;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+button:active {
+  transform: translateY(0);
 }
 
 .button-gruppe,
 .aktionen {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
 }
 
 .bearbeiten {
-  background: #e0e0e0;
+  background: #e7e7e7;
 }
 
 .abbrechen {
-  background: #d6d6d6;
+  background: #d8d8d8;
 }
 
 .loeschen {
-  background: #f2c6c6;
+  background: #f3d1d1;
+  color: #7f1717;
 }
 
+/* =========================
+   FEHLERMELDUNG
+   ========================= */
+
 .fehlermeldung {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border: 1px solid #c62828;
-  border-radius: 6px;
+  margin-bottom: 1.8rem;
+  padding: 1rem 1.2rem;
+  border-left: 5px solid #c62828;
+  border-radius: 8px;
   background: #fdecec;
   color: #8b0000;
   font-weight: 600;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+/* =========================
+   SCHICHTENLISTE
+   ========================= */
 
-  th,
-  td {
+.listen-bereich {
+  margin-top: 2rem;
+}
+
+.schicht-karte {
+  margin-bottom: 2rem;
+  padding: 1.6rem;
+  border: 1px solid #d8d8d8;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.07);
+}
+
+.schicht-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #ececec;
+}
+
+.schicht-kopf p {
+  margin: 0.45rem 0;
+}
+
+.schicht-kopf strong {
+  font-weight: 700;
+}
+
+/* =========================
+   BESCHREIBUNG
+   ========================= */
+
+.beschreibung {
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f7f7f7;
+}
+
+/* =========================
+   BESETZUNGSSTATUS
+   ========================= */
+
+.besetzungsstatus {
+  min-width: 250px;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.besetzungsstatus p {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.4rem 0;
+}
+
+.warnung {
+  margin-top: 0.9rem;
+  padding: 0.8rem;
+  border: 1px solid #d18b8b;
+  border-radius: 8px;
+  background: #fdecec;
+  color: #8b0000;
+  font-weight: 700;
+  text-align: center;
+}
+
+.vollbesetzt {
+  margin-top: 0.9rem;
+  padding: 0.8rem;
+  border: 1px solid #86b98a;
+  border-radius: 8px;
+  background: #edf7ed;
+  color: #1b5e20;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* =========================
+   ZUWEISUNGEN
+   ========================= */
+
+.zuweisungs-bereich {
+  margin-top: 1.4rem;
+  padding: 1.3rem;
+  border-radius: 12px;
+  background: #f8f8f8;
+}
+
+.zuweisungs-formular {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.3rem;
+
+  select {
+    flex: 1;
     padding: 0.8rem;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-    vertical-align: top;
+    border: 1px solid #c8c8c8;
+    border-radius: 8px;
+    background: #ffffff;
+    font: inherit;
+  }
+}
+
+.zugewiesenes-mitglied {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.6rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+/* =========================
+   AKTIONEN
+   ========================= */
+
+.schicht-karte > .aktionen {
+  margin-top: 1.4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #ececec;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 850px) {
+
+  .schichten-seite {
+    padding: 1rem;
+  }
+
+  .schicht-kopf {
+    flex-direction: column;
+  }
+
+  .besetzungsstatus {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .zuweisungs-formular {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .zugewiesenes-mitglied {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .aktionen,
+  .button-gruppe {
+    flex-direction: column;
   }
 }

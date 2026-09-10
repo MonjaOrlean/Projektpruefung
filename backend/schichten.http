@@ -68,3 +68,4 @@ Content-Type: application/json
 
 ### Schicht mit ID 1 löschen
 DELETE http://localhost:8080/api/schichten/1
+

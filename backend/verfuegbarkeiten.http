@@ -1,0 +1,62 @@
+### Alle Verfügbarkeiten laden
+GET http://localhost:8080/api/verfuegbarkeiten
+
+
+### Verfügbarkeit anlegen
+POST http://localhost:8080/api/verfuegbarkeiten
+Content-Type: application/json
+
+{
+  "datum": "2026-09-20",
+  "startzeit": "12:00:00",
+  "endzeit": "20:00:00",
+  "bemerkung": "Am Nachmittag und Abend verfügbar",
+  "mitgliedId": 1
+}
+
+
+### Verfügbarkeit mit ID 1 laden
+GET http://localhost:8080/api/verfuegbarkeiten/1
+
+
+### Verfügbarkeit mit ID 1 bearbeiten
+PUT http://localhost:8080/api/verfuegbarkeiten/1
+Content-Type: application/json
+
+{
+  "datum": "2026-09-20",
+  "startzeit": "13:00:00",
+  "endzeit": "21:00:00",
+  "bemerkung": "Verfügbarkeit wurde angepasst",
+  "mitgliedId": 1
+}
+
+
+### Ungültige Zeitspanne testen
+POST http://localhost:8080/api/verfuegbarkeiten
+Content-Type: application/json
+
+{
+  "datum": "2026-09-20",
+  "startzeit": "20:00:00",
+  "endzeit": "12:00:00",
+  "bemerkung": "Dieser Test soll fehlschlagen",
+  "mitgliedId": 1
+}
+
+
+### Ungültiges Mitglied testen
+POST http://localhost:8080/api/verfuegbarkeiten
+Content-Type: application/json
+
+{
+  "datum": "2026-09-20",
+  "startzeit": "12:00:00",
+  "endzeit": "20:00:00",
+  "bemerkung": "Mitglied existiert nicht",
+  "mitgliedId": 9999
+}
+
+
+### Verfügbarkeit mit ID 1 löschen
+DELETE http://localhost:8080/api/verfuegbarkeiten/1

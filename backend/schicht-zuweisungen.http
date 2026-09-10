@@ -1,0 +1,68 @@
+### Alle Zuweisungen laden
+GET http://localhost:8080/api/schicht-zuweisungen
+
+
+### Mitglied Schicht 1 zuweisen
+POST http://localhost:8080/api/schicht-zuweisungen
+Content-Type: application/json
+
+{
+  "schichtId": 1,
+  "mitgliedId": 1
+}
+
+
+### Alle Zuweisungen von Schicht 1 laden
+GET http://localhost:8080/api/schicht-zuweisungen/schicht/1
+
+
+### Alle Zuweisungen von Mitglied 1 laden
+GET http://localhost:8080/api/schicht-zuweisungen/mitglied/1
+
+
+### Doppelte Zuweisung zur selben Schicht testen
+POST http://localhost:8080/api/schicht-zuweisungen
+Content-Type: application/json
+
+{
+  "schichtId": 1,
+  "mitgliedId": 1
+}
+
+
+### Doppelbelegung mit überschneidender Schicht testen
+POST http://localhost:8080/api/schicht-zuweisungen
+Content-Type: application/json
+
+{
+  "schichtId": 2,
+  "mitgliedId": 1
+}
+
+
+### Ungültige Schicht testen
+POST http://localhost:8080/api/schicht-zuweisungen
+Content-Type: application/json
+
+{
+  "schichtId": 9999,
+  "mitgliedId": 1
+}
+
+
+### Ungültiges Mitglied testen
+POST http://localhost:8080/api/schicht-zuweisungen
+Content-Type: application/json
+
+{
+  "schichtId": 1,
+  "mitgliedId": 9999
+}
+
+
+### Zuweisung mit ID 1 löschen
+DELETE http://localhost:8080/api/schicht-zuweisungen/1
+
+
+### Besetzungsstatus von Schicht 1 prüfen
+GET http://localhost:8080/api/schicht-zuweisungen/schicht/1/status

@@ -4,6 +4,7 @@ import { Mitglieder } from './pages/mitglieder/mitglieder';
 import { Veranstaltungen } from './pages/veranstaltungen/veranstaltungen';
 import { Aufgaben } from './pages/aufgaben/aufgaben';
 import { Schichten } from './pages/schichten/schichten';
+import { Verfuegbarkeiten } from './pages/verfuegbarkeiten/verfuegbarkeiten';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,10 @@ export const routes: Routes = [
   {
     path: 'schichten',
     component: Schichten
+  },
+  {
+    path: 'verfuegbarkeiten',
+    component: Verfuegbarkeiten
   },
   {
     path: '',
