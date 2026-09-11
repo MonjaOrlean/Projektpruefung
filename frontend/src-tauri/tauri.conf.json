@@ -2,12 +2,12 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Vereinsplaner",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "de.vereinsplaner.desktop",
   "build": {
-    "frontendDist": "../dist../dist/frontend/browser",
-    "devUrl": "http://localhost:4200",
     "beforeDevCommand": "npm start",
-    "beforeBuildCommand": "npm run build"
+    "devUrl": "http://localhost:4200",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist/frontend/browser"
   },
   "app": {
     "windows": [
@@ -26,6 +26,9 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "resources": [
+      "resources/VereinsplanerBackend/"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
