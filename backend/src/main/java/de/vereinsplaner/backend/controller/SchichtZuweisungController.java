@@ -96,6 +96,25 @@ public class SchichtZuweisungController {
         );
     }
 
+    @GetMapping("/schicht/{schichtId}/verfuegbare-mitglieder")
+    public ResponseEntity<?> verfuegbareMitgliederFuerSchichtLaden(
+            @PathVariable Long schichtId
+    ) {
+
+        Schicht schicht = schichtService
+                .schichtNachIdLaden(schichtId)
+                .orElse(null);
+
+        if (schicht == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(
+                verfuegbarkeitService
+                        .verfuegbareMitgliederFuerSchicht(schicht)
+        );
+    }
+
     @PostMapping
     public ResponseEntity<?> zuweisungAnlegen(
             @Valid @RequestBody SchichtZuweisungCreateDto dto

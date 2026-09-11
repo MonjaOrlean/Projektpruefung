@@ -1,4 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -17,7 +23,11 @@ import { VeranstaltungService } from '../../services/veranstaltung.service';
 })
 export class Veranstaltungen implements OnInit {
 
-  private readonly veranstaltungService = inject(VeranstaltungService);
+  private readonly veranstaltungService =
+    inject(VeranstaltungService);
+
+  private readonly cdr =
+    inject(ChangeDetectorRef);
 
   veranstaltungen: Veranstaltung[] = [];
 
@@ -46,7 +56,10 @@ export class Veranstaltungen implements OnInit {
       .subscribe({
 
         next: (daten) => {
+
           this.veranstaltungen = daten;
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -58,6 +71,8 @@ export class Veranstaltungen implements OnInit {
 
           this.fehlermeldung =
             'Die Veranstaltungen konnten nicht geladen werden.';
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -66,7 +81,6 @@ export class Veranstaltungen implements OnInit {
 
     this.fehlermeldung = '';
 
-    // Name prüfen
     if (!this.neueVeranstaltung.name.trim()) {
 
       this.fehlermeldung =
@@ -75,7 +89,6 @@ export class Veranstaltungen implements OnInit {
       return;
     }
 
-    // Datum prüfen
     if (!this.neueVeranstaltung.datum) {
 
       this.fehlermeldung =
@@ -84,11 +97,11 @@ export class Veranstaltungen implements OnInit {
       return;
     }
 
-    // Zeitspanne prüfen
     if (
       this.neueVeranstaltung.startzeit &&
       this.neueVeranstaltung.endzeit &&
-      this.neueVeranstaltung.endzeit < this.neueVeranstaltung.startzeit
+      this.neueVeranstaltung.endzeit <
+      this.neueVeranstaltung.startzeit
     ) {
 
       this.fehlermeldung =
@@ -98,12 +111,12 @@ export class Veranstaltungen implements OnInit {
     }
 
     this.veranstaltungService
-      .veranstaltungAnlegen(this.neueVeranstaltung)
+      .veranstaltungAnlegen(
+        this.neueVeranstaltung
+      )
       .subscribe({
 
         next: () => {
-
-          this.veranstaltungenLaden();
 
           this.neueVeranstaltung = {
             name: '',
@@ -116,6 +129,10 @@ export class Veranstaltungen implements OnInit {
           };
 
           this.fehlermeldung = '';
+
+          this.veranstaltungenLaden();
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -127,17 +144,23 @@ export class Veranstaltungen implements OnInit {
 
           if (fehler.status === 400) {
 
-            if (fehler.error?.zeitspanneGueltig) {
+            if (
+              fehler.error?.zeitspanneGueltig
+            ) {
 
               this.fehlermeldung =
                 fehler.error.zeitspanneGueltig;
 
-            } else if (fehler.error?.name) {
+            } else if (
+              fehler.error?.name
+            ) {
 
               this.fehlermeldung =
                 fehler.error.name;
 
-            } else if (fehler.error?.datum) {
+            } else if (
+              fehler.error?.datum
+            ) {
 
               this.fehlermeldung =
                 fehler.error.datum;
@@ -153,6 +176,8 @@ export class Veranstaltungen implements OnInit {
             this.fehlermeldung =
               'Die Veranstaltung konnte nicht gespeichert werden.';
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -166,6 +191,8 @@ export class Veranstaltungen implements OnInit {
     this.bearbeiteteVeranstaltung = {
       ...veranstaltung
     };
+
+    this.cdr.markForCheck();
   }
 
   bearbeitungAbbrechen(): void {
@@ -173,6 +200,8 @@ export class Veranstaltungen implements OnInit {
     this.fehlermeldung = '';
 
     this.bearbeiteteVeranstaltung = null;
+
+    this.cdr.markForCheck();
   }
 
   veranstaltungSpeichern(): void {
@@ -183,8 +212,11 @@ export class Veranstaltungen implements OnInit {
       return;
     }
 
-    // Name prüfen
-    if (!this.bearbeiteteVeranstaltung.name.trim()) {
+    if (
+      !this.bearbeiteteVeranstaltung
+        .name
+        .trim()
+    ) {
 
       this.fehlermeldung =
         'Bitte gib einen Namen für die Veranstaltung ein.';
@@ -192,8 +224,9 @@ export class Veranstaltungen implements OnInit {
       return;
     }
 
-    // Datum prüfen
-    if (!this.bearbeiteteVeranstaltung.datum) {
+    if (
+      !this.bearbeiteteVeranstaltung.datum
+    ) {
 
       this.fehlermeldung =
         'Bitte wähle ein Datum für die Veranstaltung aus.';
@@ -201,7 +234,6 @@ export class Veranstaltungen implements OnInit {
       return;
     }
 
-    // Zeitspanne prüfen
     if (
       this.bearbeiteteVeranstaltung.startzeit &&
       this.bearbeiteteVeranstaltung.endzeit &&
@@ -226,9 +258,11 @@ export class Veranstaltungen implements OnInit {
 
           this.bearbeiteteVeranstaltung = null;
 
+          this.fehlermeldung = '';
+
           this.veranstaltungenLaden();
 
-          this.fehlermeldung = '';
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -240,17 +274,23 @@ export class Veranstaltungen implements OnInit {
 
           if (fehler.status === 400) {
 
-            if (fehler.error?.zeitspanneGueltig) {
+            if (
+              fehler.error?.zeitspanneGueltig
+            ) {
 
               this.fehlermeldung =
                 fehler.error.zeitspanneGueltig;
 
-            } else if (fehler.error?.name) {
+            } else if (
+              fehler.error?.name
+            ) {
 
               this.fehlermeldung =
                 fehler.error.name;
 
-            } else if (fehler.error?.datum) {
+            } else if (
+              fehler.error?.datum
+            ) {
 
               this.fehlermeldung =
                 fehler.error.datum;
@@ -266,11 +306,15 @@ export class Veranstaltungen implements OnInit {
             this.fehlermeldung =
               'Die Veranstaltung konnte nicht gespeichert werden.';
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
 
-  veranstaltungLoeschen(id?: number): void {
+  veranstaltungLoeschen(
+    id?: number
+  ): void {
 
     this.fehlermeldung = '';
 
@@ -284,9 +328,11 @@ export class Veranstaltungen implements OnInit {
 
         next: () => {
 
+          this.fehlermeldung = '';
+
           this.veranstaltungenLaden();
 
-          this.fehlermeldung = '';
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -298,6 +344,8 @@ export class Veranstaltungen implements OnInit {
 
           this.fehlermeldung =
             'Die Veranstaltung konnte nicht gelöscht werden.';
+
+          this.cdr.markForCheck();
         }
       });
   }

@@ -1,0 +1,47 @@
+### Alle Einsatzbereiche laden
+GET http://localhost:8080/api/einsatzbereiche
+
+
+### Einsatzbereich nach ID laden
+GET http://localhost:8080/api/einsatzbereiche/1
+
+
+### Einsatzbereiche einer Veranstaltung laden
+GET http://localhost:8080/api/einsatzbereiche/veranstaltung/1
+
+
+### Einsatzbereich anlegen
+POST http://localhost:8080/api/einsatzbereiche
+Content-Type: application/json
+
+{
+  "name": "Ausschank",
+  "beschreibung": "Getränkeausgabe im Veranstaltungsbereich",
+  "veranstaltungId": 1
+}
+
+
+### Einsatzbereich bearbeiten
+PUT http://localhost:8080/api/einsatzbereiche/1
+Content-Type: application/json
+
+{
+  "name": "Getränkeausschank",
+  "beschreibung": "Getränkeausgabe im Hauptbereich",
+  "veranstaltungId": 1
+}
+
+
+### Ungültige Veranstaltung testen
+POST http://localhost:8080/api/einsatzbereiche
+Content-Type: application/json
+
+{
+  "name": "Spüldienst",
+  "beschreibung": "Geschirr und Gläser reinigen",
+  "veranstaltungId": 99999
+}
+
+
+### Einsatzbereich löschen
+DELETE http://localhost:8080/api/einsatzbereiche/1

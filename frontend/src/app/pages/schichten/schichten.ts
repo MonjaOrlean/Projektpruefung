@@ -1,4 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -40,6 +46,9 @@ export class Schichten implements OnInit {
   private readonly schichtZuweisungService =
     inject(SchichtZuweisungService);
 
+  private readonly cdr =
+    inject(ChangeDetectorRef);
+
   schichten: Schicht[] = [];
   veranstaltungen: Veranstaltung[] = [];
   mitglieder: Mitglied[] = [];
@@ -48,6 +57,10 @@ export class Schichten implements OnInit {
 
   besetzungsstatus: {
     [schichtId: number]: SchichtBesetzungsstatus;
+  } = {};
+
+  verfuegbareMitglieder: {
+    [schichtId: number]: Mitglied[];
   } = {};
 
   ausgewaehltesMitglied: {
@@ -96,10 +109,18 @@ export class Schichten implements OnInit {
           this.schichten.forEach(schicht => {
 
             if (schicht.id !== undefined) {
-              this.besetzungsstatusLaden(schicht.id);
-            }
 
+              this.besetzungsstatusLaden(
+                schicht.id
+              );
+
+              this.verfuegbareMitgliederLaden(
+                schicht.id
+              );
+            }
           });
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -111,6 +132,8 @@ export class Schichten implements OnInit {
 
           this.fehlermeldung =
             'Die Schichten konnten nicht geladen werden.';
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -121,14 +144,20 @@ export class Schichten implements OnInit {
       .alleVeranstaltungenLaden()
       .subscribe({
         next: (daten) => {
+
           this.veranstaltungen = daten;
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
+
           console.error(
             'Veranstaltungen konnten nicht geladen werden:',
             fehler
           );
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -139,14 +168,20 @@ export class Schichten implements OnInit {
       .alleMitgliederLaden()
       .subscribe({
         next: (daten) => {
+
           this.mitglieder = daten;
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
+
           console.error(
             'Mitglieder konnten nicht geladen werden:',
             fehler
           );
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -157,14 +192,20 @@ export class Schichten implements OnInit {
       .alleZuweisungenLaden()
       .subscribe({
         next: (daten) => {
+
           this.zuweisungen = daten;
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
+
           console.error(
             'Zuweisungen konnten nicht geladen werden:',
             fehler
           );
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -180,13 +221,50 @@ export class Schichten implements OnInit {
 
           this.besetzungsstatus[schichtId] =
             status;
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
+
           console.error(
             'Besetzungsstatus konnte nicht geladen werden:',
             fehler
           );
+
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  verfuegbareMitgliederLaden(
+    schichtId: number
+  ): void {
+
+    this.schichtZuweisungService
+      .verfuegbareMitgliederFuerSchichtLaden(
+        schichtId
+      )
+      .subscribe({
+        next: (daten) => {
+
+          this.verfuegbareMitglieder[schichtId] =
+            daten;
+
+          this.cdr.markForCheck();
+        },
+
+        error: (fehler) => {
+
+          console.error(
+            'Verfügbare Mitglieder konnten nicht geladen werden:',
+            fehler
+          );
+
+          this.verfuegbareMitglieder[schichtId] =
+            [];
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -227,6 +305,12 @@ export class Schichten implements OnInit {
           this.besetzungsstatusLaden(
             schichtId
           );
+
+          this.verfuegbareMitgliederLaden(
+            schichtId
+          );
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -239,9 +323,12 @@ export class Schichten implements OnInit {
           if (fehler.status === 400) {
 
             if (typeof fehler.error === 'string') {
+
               this.fehlermeldung =
                 fehler.error;
+
             } else {
+
               this.fehlermeldung =
                 'Das Mitglied konnte nicht zugewiesen werden.';
             }
@@ -251,6 +338,8 @@ export class Schichten implements OnInit {
             this.fehlermeldung =
               'Das Mitglied konnte nicht zugewiesen werden.';
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -272,6 +361,12 @@ export class Schichten implements OnInit {
           this.besetzungsstatusLaden(
             schichtId
           );
+
+          this.verfuegbareMitgliederLaden(
+            schichtId
+          );
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -283,6 +378,8 @@ export class Schichten implements OnInit {
 
           this.fehlermeldung =
             'Die Zuweisung konnte nicht gelöscht werden.';
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -365,8 +462,6 @@ export class Schichten implements OnInit {
       .subscribe({
         next: () => {
 
-          this.schichtenLaden();
-
           this.neueSchicht = {
             name: '',
             datum: '',
@@ -376,6 +471,10 @@ export class Schichten implements OnInit {
             beschreibung: '',
             veranstaltungId: null
           };
+
+          this.schichtenLaden();
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -440,6 +539,8 @@ export class Schichten implements OnInit {
             this.fehlermeldung =
               'Die Schicht konnte nicht gespeichert werden.';
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -575,6 +676,8 @@ export class Schichten implements OnInit {
           this.bearbeiteteSchicht = null;
 
           this.schichtenLaden();
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -604,6 +707,8 @@ export class Schichten implements OnInit {
             this.fehlermeldung =
               'Die Schicht konnte nicht gespeichert werden.';
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -626,6 +731,8 @@ export class Schichten implements OnInit {
           this.schichtenLaden();
 
           this.zuweisungenLaden();
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -637,6 +744,8 @@ export class Schichten implements OnInit {
 
           this.fehlermeldung =
             'Die Schicht konnte nicht gelöscht werden.';
+
+          this.cdr.markForCheck();
         }
       });
   }

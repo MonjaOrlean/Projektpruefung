@@ -1,4 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -20,8 +26,14 @@ import { VeranstaltungService } from '../../services/veranstaltung.service';
 })
 export class Aufgaben implements OnInit {
 
-  private readonly aufgabeService = inject(AufgabeService);
-  private readonly veranstaltungService = inject(VeranstaltungService);
+  private readonly aufgabeService =
+    inject(AufgabeService);
+
+  private readonly veranstaltungService =
+    inject(VeranstaltungService);
+
+  private readonly cdr =
+    inject(ChangeDetectorRef);
 
   aufgaben: Aufgabe[] = [];
   veranstaltungen: Veranstaltung[] = [];
@@ -48,13 +60,19 @@ export class Aufgaben implements OnInit {
   }
 
   aufgabenLaden(): void {
+
     this.aufgabeService
       .alleAufgabenLaden()
       .subscribe({
         next: (daten) => {
+
           this.aufgaben = daten;
+
+          this.cdr.markForCheck();
         },
+
         error: (fehler) => {
+
           console.error(
             'Aufgaben konnten nicht geladen werden:',
             fehler
@@ -62,22 +80,32 @@ export class Aufgaben implements OnInit {
 
           this.fehlermeldung =
             'Die Aufgaben konnten nicht geladen werden.';
+
+          this.cdr.markForCheck();
         }
       });
   }
 
   veranstaltungenLaden(): void {
+
     this.veranstaltungService
       .alleVeranstaltungenLaden()
       .subscribe({
         next: (daten) => {
+
           this.veranstaltungen = daten;
+
+          this.cdr.markForCheck();
         },
+
         error: (fehler) => {
+
           console.error(
             'Veranstaltungen konnten nicht geladen werden:',
             fehler
           );
+
+          this.cdr.markForCheck();
         }
       });
   }
@@ -87,6 +115,7 @@ export class Aufgaben implements OnInit {
     this.fehlermeldung = '';
 
     if (!this.neueAufgabe.titel.trim()) {
+
       this.fehlermeldung =
         'Bitte gib einen Titel für die Aufgabe ein.';
 
@@ -94,17 +123,21 @@ export class Aufgaben implements OnInit {
     }
 
     this.aufgabeService
-      .aufgabeAnlegen(this.neueAufgabe)
+      .aufgabeAnlegen(
+        this.neueAufgabe
+      )
       .subscribe({
         next: () => {
-
-          this.aufgabenLaden();
 
           this.neueAufgabe = {
             titel: '',
             beschreibung: '',
             veranstaltungId: null
           };
+
+          this.aufgabenLaden();
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -117,9 +150,12 @@ export class Aufgaben implements OnInit {
           if (fehler.status === 400) {
 
             if (fehler.error?.titel) {
+
               this.fehlermeldung =
                 fehler.error.titel;
+
             } else {
+
               this.fehlermeldung =
                 'Bitte überprüfe deine Eingaben.';
             }
@@ -129,11 +165,15 @@ export class Aufgaben implements OnInit {
             this.fehlermeldung =
               'Die Aufgabe konnte nicht gespeichert werden.';
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
 
-  bearbeitungStarten(aufgabe: Aufgabe): void {
+  bearbeitungStarten(
+    aufgabe: Aufgabe
+  ): void {
 
     this.fehlermeldung = '';
 
@@ -144,16 +184,24 @@ export class Aufgaben implements OnInit {
     this.bearbeiteteAufgabe = {
       id: aufgabe.id,
       titel: aufgabe.titel,
-      beschreibung: aufgabe.beschreibung ?? '',
-      erledigt: aufgabe.erledigt,
+      beschreibung:
+        aufgabe.beschreibung ?? '',
+      erledigt:
+      aufgabe.erledigt,
       veranstaltungId:
         aufgabe.veranstaltung?.id ?? null
     };
+
+    this.cdr.markForCheck();
   }
 
   bearbeitungAbbrechen(): void {
+
     this.fehlermeldung = '';
+
     this.bearbeiteteAufgabe = null;
+
+    this.cdr.markForCheck();
   }
 
   aufgabeSpeichern(): void {
@@ -164,7 +212,9 @@ export class Aufgaben implements OnInit {
       return;
     }
 
-    if (!this.bearbeiteteAufgabe.titel.trim()) {
+    if (
+      !this.bearbeiteteAufgabe.titel.trim()
+    ) {
 
       this.fehlermeldung =
         'Bitte gib einen Titel für die Aufgabe ein.';
@@ -176,11 +226,15 @@ export class Aufgaben implements OnInit {
       .aufgabeBearbeiten(
         this.bearbeiteteAufgabe.id,
         {
-          titel: this.bearbeiteteAufgabe.titel,
+          titel:
+          this.bearbeiteteAufgabe.titel,
+
           beschreibung:
           this.bearbeiteteAufgabe.beschreibung,
+
           erledigt:
           this.bearbeiteteAufgabe.erledigt,
+
           veranstaltungId:
           this.bearbeiteteAufgabe.veranstaltungId
         }
@@ -191,6 +245,8 @@ export class Aufgaben implements OnInit {
           this.bearbeiteteAufgabe = null;
 
           this.aufgabenLaden();
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -203,9 +259,12 @@ export class Aufgaben implements OnInit {
           if (fehler.status === 400) {
 
             if (fehler.error?.titel) {
+
               this.fehlermeldung =
                 fehler.error.titel;
+
             } else {
+
               this.fehlermeldung =
                 'Bitte überprüfe deine Eingaben.';
             }
@@ -215,11 +274,15 @@ export class Aufgaben implements OnInit {
             this.fehlermeldung =
               'Die Aufgabe konnte nicht gespeichert werden.';
           }
+
+          this.cdr.markForCheck();
         }
       });
   }
 
-  aufgabeLoeschen(id?: number): void {
+  aufgabeLoeschen(
+    id?: number
+  ): void {
 
     this.fehlermeldung = '';
 
@@ -231,7 +294,10 @@ export class Aufgaben implements OnInit {
       .aufgabeLoeschen(id)
       .subscribe({
         next: () => {
+
           this.aufgabenLaden();
+
+          this.cdr.markForCheck();
         },
 
         error: (fehler) => {
@@ -243,6 +309,8 @@ export class Aufgaben implements OnInit {
 
           this.fehlermeldung =
             'Die Aufgabe konnte nicht gelöscht werden.';
+
+          this.cdr.markForCheck();
         }
       });
   }

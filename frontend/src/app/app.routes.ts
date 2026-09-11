@@ -5,6 +5,7 @@ import { Veranstaltungen } from './pages/veranstaltungen/veranstaltungen';
 import { Aufgaben } from './pages/aufgaben/aufgaben';
 import { Schichten } from './pages/schichten/schichten';
 import { Verfuegbarkeiten } from './pages/verfuegbarkeiten/verfuegbarkeiten';
+import { Einsatzplan } from './pages/einsatzplan/einsatzplan';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,10 @@ export const routes: Routes = [
   {
     path: 'verfuegbarkeiten',
     component: Verfuegbarkeiten
+  },
+  {
+    path: 'einsatzplan',
+    component: Einsatzplan
   },
   {
     path: '',

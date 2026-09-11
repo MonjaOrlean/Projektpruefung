@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { Mitglied } from '../models/mitglied';
+
 import {
   SchichtBesetzungsstatus,
   SchichtZuweisung
@@ -18,6 +20,7 @@ export class SchichtZuweisungService {
     'http://localhost:8080/api/schicht-zuweisungen';
 
   alleZuweisungenLaden(): Observable<SchichtZuweisung[]> {
+
     return this.http.get<SchichtZuweisung[]>(
       this.apiUrl
     );
@@ -70,6 +73,15 @@ export class SchichtZuweisungService {
 
     return this.http.get<SchichtBesetzungsstatus>(
       `${this.apiUrl}/schicht/${schichtId}/status`
+    );
+  }
+
+  verfuegbareMitgliederFuerSchichtLaden(
+    schichtId: number
+  ): Observable<Mitglied[]> {
+
+    return this.http.get<Mitglied[]>(
+      `${this.apiUrl}/schicht/${schichtId}/verfuegbare-mitglieder`
     );
   }
 }

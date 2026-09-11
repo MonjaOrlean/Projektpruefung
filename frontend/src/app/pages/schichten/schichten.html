@@ -384,7 +384,10 @@
             </option>
 
             <option
-              *ngFor="let mitglied of mitglieder"
+              *ngFor="
+                let mitglied of
+                  verfuegbareMitglieder[schicht.id] || []
+              "
               [ngValue]="mitglied.id"
             >
               {{ mitglied.vorname }}
@@ -401,6 +404,15 @@
           </button>
 
         </div>
+
+        <p
+          class="hinweis"
+          *ngIf="
+            (verfuegbareMitglieder[schicht.id] || []).length === 0
+          "
+        >
+          Für diese Schicht sind aktuell keine Mitglieder vollständig verfügbar.
+        </p>
 
         <h4>Zugewiesene Mitglieder</h4>
 

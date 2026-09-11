@@ -1,4 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -17,7 +23,11 @@ import { MitgliedService } from '../../services/mitglied.service';
 })
 export class Mitglieder implements OnInit {
 
-  private readonly mitgliedService = inject(MitgliedService);
+  private readonly mitgliedService =
+    inject(MitgliedService);
+
+  private readonly cdr =
+    inject(ChangeDetectorRef);
 
   mitglieder: Mitglied[] = [];
 
@@ -36,43 +46,79 @@ export class Mitglieder implements OnInit {
   }
 
   mitgliederLaden(): void {
-    this.mitgliedService.alleMitgliederLaden().subscribe({
-      next: (daten) => {
-        this.mitglieder = daten;
-      },
-      error: (fehler) => {
-        console.error('Mitglieder konnten nicht geladen werden:', fehler);
-      }
-    });
+
+    this.mitgliedService
+      .alleMitgliederLaden()
+      .subscribe({
+        next: (daten) => {
+
+          this.mitglieder = daten;
+
+          this.cdr.markForCheck();
+        },
+
+        error: (fehler) => {
+
+          console.error(
+            'Mitglieder konnten nicht geladen werden:',
+            fehler
+          );
+
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   mitgliedAnlegen(): void {
-    this.mitgliedService.mitgliedAnlegen(this.neuesMitglied).subscribe({
-      next: () => {
-        this.mitgliederLaden();
 
-        this.neuesMitglied = {
-          vorname: '',
-          nachname: '',
-          email: '',
-          telefon: '',
-          aktiv: true
-        };
-      },
-      error: (fehler) => {
-        console.error('Mitglied konnte nicht angelegt werden:', fehler);
-      }
-    });
+    this.mitgliedService
+      .mitgliedAnlegen(
+        this.neuesMitglied
+      )
+      .subscribe({
+        next: () => {
+
+          this.neuesMitglied = {
+            vorname: '',
+            nachname: '',
+            email: '',
+            telefon: '',
+            aktiv: true
+          };
+
+          this.mitgliederLaden();
+
+          this.cdr.markForCheck();
+        },
+
+        error: (fehler) => {
+
+          console.error(
+            'Mitglied konnte nicht angelegt werden:',
+            fehler
+          );
+
+          this.cdr.markForCheck();
+        }
+      });
   }
 
-  bearbeitungStarten(mitglied: Mitglied): void {
+  bearbeitungStarten(
+    mitglied: Mitglied
+  ): void {
+
     this.bearbeitetesMitglied = {
       ...mitglied
     };
+
+    this.cdr.markForCheck();
   }
 
   bearbeitungAbbrechen(): void {
+
     this.bearbeitetesMitglied = null;
+
+    this.cdr.markForCheck();
   }
 
   mitgliedSpeichern(): void {
@@ -88,28 +134,53 @@ export class Mitglieder implements OnInit {
       )
       .subscribe({
         next: () => {
+
           this.bearbeitetesMitglied = null;
+
           this.mitgliederLaden();
+
+          this.cdr.markForCheck();
         },
+
         error: (fehler) => {
-          console.error('Mitglied konnte nicht bearbeitet werden:', fehler);
+
+          console.error(
+            'Mitglied konnte nicht bearbeitet werden:',
+            fehler
+          );
+
+          this.cdr.markForCheck();
         }
       });
   }
 
-  mitgliedLoeschen(id?: number): void {
+  mitgliedLoeschen(
+    id?: number
+  ): void {
 
     if (id === undefined) {
       return;
     }
 
-    this.mitgliedService.mitgliedLoeschen(id).subscribe({
-      next: () => {
-        this.mitgliederLaden();
-      },
-      error: (fehler) => {
-        console.error('Mitglied konnte nicht gelöscht werden:', fehler);
-      }
-    });
+    this.mitgliedService
+      .mitgliedLoeschen(id)
+      .subscribe({
+        next: () => {
+
+          this.mitgliederLaden();
+
+          this.cdr.markForCheck();
+        },
+
+        error: (fehler) => {
+
+          console.error(
+            'Mitglied konnte nicht gelöscht werden:',
+            fehler
+          );
+
+          this.cdr.markForCheck();
+        }
+      });
   }
 }

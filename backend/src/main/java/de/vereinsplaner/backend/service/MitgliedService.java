@@ -12,8 +12,14 @@ public class MitgliedService {
 
     private final MitgliedRepository mitgliedRepository;
 
-    public MitgliedService(MitgliedRepository mitgliedRepository) {
+    private final SchichtZuweisungService schichtZuweisungService;
+
+    public MitgliedService(
+            MitgliedRepository mitgliedRepository,
+            SchichtZuweisungService schichtZuweisungService
+    ) {
         this.mitgliedRepository = mitgliedRepository;
+        this.schichtZuweisungService = schichtZuweisungService;
     }
 
     public List<Mitglied> alleMitgliederLaden() {
@@ -29,6 +35,10 @@ public class MitgliedService {
     }
 
     public void mitgliedLoeschen(Long id) {
+
+        schichtZuweisungService
+                .zuweisungenNachMitgliedLoeschen(id);
+
         mitgliedRepository.deleteById(id);
     }
 }

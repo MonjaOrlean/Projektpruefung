@@ -1,0 +1,197 @@
+<div class="einsatzplan-seite">
+
+  <div class="seiten-kopf">
+
+    <div>
+      <h1>Einsatzplan</h1>
+
+      <p class="einleitung">
+        Übersicht aller geplanten Schichten mit Besetzung und aktuellem Status.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      class="export-button"
+      (click)="einsatzplanExportieren()"
+      [disabled]="wirdExportiert || schichten.length === 0"
+    >
+      <span *ngIf="!wirdExportiert">
+        Einsatzplan exportieren
+      </span>
+
+      <span *ngIf="wirdExportiert">
+        Export läuft...
+      </span>
+    </button>
+
+  </div>
+
+  <div
+    class="fehlermeldung"
+    *ngIf="fehlermeldung"
+  >
+    {{ fehlermeldung }}
+  </div>
+
+  <div
+    class="laden"
+    *ngIf="wirdGeladen"
+  >
+    Einsatzplan wird geladen...
+  </div>
+
+  <p
+    class="leer"
+    *ngIf="
+      !wirdGeladen &&
+      !fehlermeldung &&
+      schichten.length === 0
+    "
+  >
+    Es sind aktuell keine Schichten im Einsatzplan vorhanden.
+  </p>
+
+  <section
+    class="einsatzplan-liste"
+    *ngIf="
+      !wirdGeladen &&
+      schichten.length > 0
+    "
+  >
+
+    <div
+      class="einsatzplan-karte"
+      *ngFor="let schicht of schichten"
+    >
+
+      <div class="karten-kopf">
+
+        <div>
+          <h2>
+            {{ schicht.schichtName }}
+          </h2>
+
+          <p class="datum">
+            {{ schicht.datum }}
+          </p>
+        </div>
+
+        <div
+          class="status"
+          [class.status-warnung]="schicht.unterbesetzt"
+          [class.status-ok]="!schicht.unterbesetzt"
+        >
+          <span *ngIf="schicht.unterbesetzt">
+            ⚠ Unterbesetzt
+          </span>
+
+          <span *ngIf="!schicht.unterbesetzt">
+            ✓ Ausreichend besetzt
+          </span>
+        </div>
+
+      </div>
+
+      <div class="informationen">
+
+        <div class="info-block">
+          <span class="info-label">
+            Zeitraum
+          </span>
+
+          <strong>
+            {{ schicht.startzeit }}
+            -
+            {{ schicht.endzeit }}
+          </strong>
+        </div>
+
+        <div class="info-block">
+          <span class="info-label">
+            Veranstaltung
+          </span>
+
+          <strong>
+            {{
+              schicht.veranstaltungName ||
+              'Keine Veranstaltung'
+            }}
+          </strong>
+        </div>
+
+        <div class="info-block">
+          <span class="info-label">
+            Benötigt
+          </span>
+
+          <strong>
+            {{ schicht.benoetigtePersonen }}
+          </strong>
+        </div>
+
+        <div class="info-block">
+          <span class="info-label">
+            Zugewiesen
+          </span>
+
+          <strong>
+            {{ schicht.zugewiesenePersonen }}
+          </strong>
+        </div>
+
+        <div class="info-block">
+          <span class="info-label">
+            Fehlend
+          </span>
+
+          <strong>
+            {{ schicht.fehlendePersonen }}
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="mitglieder-bereich">
+
+        <h3>Zugewiesene Mitglieder</h3>
+
+        <p
+          class="keine-mitglieder"
+          *ngIf="schicht.mitglieder.length === 0"
+        >
+          Noch keine Mitglieder zugewiesen.
+        </p>
+
+        <div
+          class="mitglieder-liste"
+          *ngIf="schicht.mitglieder.length > 0"
+        >
+
+          <div
+            class="mitglied"
+            *ngFor="let mitglied of schicht.mitglieder"
+          >
+            {{ mitglied }}
+          </div>
+
+        </div>
+
+      </div>
+
+      <div
+        class="warnhinweis"
+        *ngIf="schicht.unterbesetzt"
+      >
+        Für diese Schicht fehlen noch
+        <strong>
+          {{ schicht.fehlendePersonen }}
+        </strong>
+        Person(en).
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

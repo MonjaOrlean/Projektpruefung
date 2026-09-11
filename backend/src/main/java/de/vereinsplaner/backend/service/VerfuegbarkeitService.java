@@ -1,10 +1,12 @@
 package de.vereinsplaner.backend.service;
 
+import de.vereinsplaner.backend.model.Mitglied;
 import de.vereinsplaner.backend.model.Schicht;
 import de.vereinsplaner.backend.model.Verfuegbarkeit;
 import de.vereinsplaner.backend.repository.VerfuegbarkeitRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,11 +14,14 @@ import java.util.Optional;
 public class VerfuegbarkeitService {
 
     private final VerfuegbarkeitRepository verfuegbarkeitRepository;
+    private final MitgliedService mitgliedService;
 
     public VerfuegbarkeitService(
-            VerfuegbarkeitRepository verfuegbarkeitRepository
+            VerfuegbarkeitRepository verfuegbarkeitRepository,
+            MitgliedService mitgliedService
     ) {
         this.verfuegbarkeitRepository = verfuegbarkeitRepository;
+        this.mitgliedService = mitgliedService;
     }
 
     public List<Verfuegbarkeit> alleVerfuegbarkeitenLaden() {
@@ -62,6 +67,37 @@ public class VerfuegbarkeitService {
         }
 
         return false;
+    }
+
+    public List<Mitglied> verfuegbareMitgliederFuerSchicht(
+            Schicht schicht
+    ) {
+
+        List<Mitglied> alleMitglieder =
+                mitgliedService.alleMitgliederLaden();
+
+        List<Mitglied> verfuegbareMitglieder =
+                new ArrayList<>();
+
+        for (Mitglied mitglied : alleMitglieder) {
+
+            if (!mitglied.isAktiv()) {
+                continue;
+            }
+
+            if (mitglied.getId() == null) {
+                continue;
+            }
+
+            if (istMitgliedFuerSchichtVerfuegbar(
+                    mitglied.getId(),
+                    schicht
+            )) {
+                verfuegbareMitglieder.add(mitglied);
+            }
+        }
+
+        return verfuegbareMitglieder;
     }
 
     public Verfuegbarkeit verfuegbarkeitSpeichern(

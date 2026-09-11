@@ -66,3 +66,12 @@ DELETE http://localhost:8080/api/schicht-zuweisungen/1
 
 ### Besetzungsstatus von Schicht 1 prüfen
 GET http://localhost:8080/api/schicht-zuweisungen/schicht/1/status
+
+### Mitglied ohne ausreichende Verfügbarkeit zuweisen
+POST http://localhost:8080/api/schicht-zuweisungen
+Content-Type: application/json
+
+{
+  "schichtId": 1,
+  "mitgliedId": 1
+}

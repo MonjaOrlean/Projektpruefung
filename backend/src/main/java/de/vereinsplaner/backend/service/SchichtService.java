@@ -11,9 +11,14 @@ import java.util.Optional;
 public class SchichtService {
 
     private final SchichtRepository schichtRepository;
+    private final SchichtZuweisungService schichtZuweisungService;
 
-    public SchichtService(SchichtRepository schichtRepository) {
+    public SchichtService(
+            SchichtRepository schichtRepository,
+            SchichtZuweisungService schichtZuweisungService
+    ) {
         this.schichtRepository = schichtRepository;
+        this.schichtZuweisungService = schichtZuweisungService;
     }
 
     public List<Schicht> alleSchichtenLaden() {
@@ -29,6 +34,11 @@ public class SchichtService {
     }
 
     public void schichtLoeschen(Long id) {
+
+        schichtZuweisungService
+                .zuweisungenNachSchichtLoeschen(id);
+
         schichtRepository.deleteById(id);
     }
+
 }

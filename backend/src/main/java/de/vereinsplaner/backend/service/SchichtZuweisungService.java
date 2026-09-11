@@ -134,4 +134,11 @@ public class SchichtZuweisungService {
     public void zuweisungLoeschen(Long id) {
         schichtZuweisungRepository.deleteById(id);
     }
+
+    public void zuweisungenNachSchichtLoeschen(Long schichtId) {
+        schichtZuweisungRepository.deleteBySchichtId(schichtId);
+    }
+    public void zuweisungenNachMitgliedLoeschen(Long mitgliedId) {
+        schichtZuweisungRepository.deleteByMitgliedId(mitgliedId);
+    }
 }

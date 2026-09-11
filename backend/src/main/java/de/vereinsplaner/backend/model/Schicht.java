@@ -35,25 +35,11 @@ public class Schicht {
     @JoinColumn(name = "veranstaltung_id")
     private Veranstaltung veranstaltung;
 
-    public Schicht() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "einsatzbereich_id")
+    private Einsatzbereich einsatzbereich;
 
-    public Schicht(
-            String name,
-            LocalDate datum,
-            LocalTime startzeit,
-            LocalTime endzeit,
-            int benoetigtePersonen,
-            String beschreibung,
-            Veranstaltung veranstaltung
-    ) {
-        this.name = name;
-        this.datum = datum;
-        this.startzeit = startzeit;
-        this.endzeit = endzeit;
-        this.benoetigtePersonen = benoetigtePersonen;
-        this.beschreibung = beschreibung;
-        this.veranstaltung = veranstaltung;
+    public Schicht() {
     }
 
     public Long getId() {
@@ -118,5 +104,13 @@ public class Schicht {
 
     public void setVeranstaltung(Veranstaltung veranstaltung) {
         this.veranstaltung = veranstaltung;
+    }
+
+    public Einsatzbereich getEinsatzbereich() {
+        return einsatzbereich;
+    }
+
+    public void setEinsatzbereich(Einsatzbereich einsatzbereich) {
+        this.einsatzbereich = einsatzbereich;
     }
 }
