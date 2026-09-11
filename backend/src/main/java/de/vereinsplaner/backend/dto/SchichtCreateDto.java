@@ -10,26 +10,43 @@ import java.time.LocalTime;
 
 public class SchichtCreateDto {
 
-    @NotBlank(message = "Name darf nicht leer sein.")
+    @NotBlank
     private String name;
 
-    @NotNull(message = "Datum darf nicht leer sein.")
+    @NotNull
     private LocalDate datum;
 
-    @NotNull(message = "Startzeit darf nicht leer sein.")
+    @NotNull
     private LocalTime startzeit;
 
-    @NotNull(message = "Endzeit darf nicht leer sein.")
+    @NotNull
     private LocalTime endzeit;
 
-    @Min(value = 1, message = "Es muss mindestens eine Person benötigt werden.")
+    @Min(1)
     private int benoetigtePersonen;
 
     private String beschreibung;
 
     private Long veranstaltungId;
 
+    private Long einsatzbereichId;
+
     public SchichtCreateDto() {
+    }
+
+    @AssertTrue(
+            message = "Die Endzeit darf nicht vor der Startzeit liegen."
+    )
+    public boolean isZeitspanneGueltig() {
+
+        if (
+                startzeit == null ||
+                        endzeit == null
+        ) {
+            return true;
+        }
+
+        return !endzeit.isBefore(startzeit);
     }
 
     public String getName() {
@@ -68,33 +85,43 @@ public class SchichtCreateDto {
         return benoetigtePersonen;
     }
 
-    public void setBenoetigtePersonen(int benoetigtePersonen) {
-        this.benoetigtePersonen = benoetigtePersonen;
+    public void setBenoetigtePersonen(
+            int benoetigtePersonen
+    ) {
+        this.benoetigtePersonen =
+                benoetigtePersonen;
     }
 
     public String getBeschreibung() {
         return beschreibung;
     }
 
-    public void setBeschreibung(String beschreibung) {
-        this.beschreibung = beschreibung;
+    public void setBeschreibung(
+            String beschreibung
+    ) {
+        this.beschreibung =
+                beschreibung;
     }
 
     public Long getVeranstaltungId() {
         return veranstaltungId;
     }
 
-    public void setVeranstaltungId(Long veranstaltungId) {
-        this.veranstaltungId = veranstaltungId;
+    public void setVeranstaltungId(
+            Long veranstaltungId
+    ) {
+        this.veranstaltungId =
+                veranstaltungId;
     }
 
-    @AssertTrue(message = "Die Endzeit darf nicht vor der Startzeit liegen.")
-    public boolean isZeitspanneGueltig() {
+    public Long getEinsatzbereichId() {
+        return einsatzbereichId;
+    }
 
-        if (startzeit == null || endzeit == null) {
-            return true;
-        }
-
-        return !endzeit.isBefore(startzeit);
+    public void setEinsatzbereichId(
+            Long einsatzbereichId
+    ) {
+        this.einsatzbereichId =
+                einsatzbereichId;
     }
 }
