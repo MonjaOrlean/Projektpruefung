@@ -8,7 +8,11 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { Schicht } from '../../models/schicht';
+import {
+  Einsatzbereich,
+  Schicht
+} from '../../models/schicht';
+
 import { Veranstaltung } from '../../models/veranstaltung';
 import { Mitglied } from '../../models/mitglied';
 
@@ -21,6 +25,7 @@ import { SchichtService } from '../../services/schicht.service';
 import { VeranstaltungService } from '../../services/veranstaltung.service';
 import { MitgliedService } from '../../services/mitglied.service';
 import { SchichtZuweisungService } from '../../services/schicht-zuweisung.service';
+import { EinsatzbereichService } from '../../services/einsatzbereich.service';
 
 @Component({
   selector: 'app-schichten',
@@ -46,12 +51,19 @@ export class Schichten implements OnInit {
   private readonly schichtZuweisungService =
     inject(SchichtZuweisungService);
 
+  private readonly einsatzbereichService =
+    inject(EinsatzbereichService);
+
   private readonly cdr =
     inject(ChangeDetectorRef);
 
   schichten: Schicht[] = [];
+
   veranstaltungen: Veranstaltung[] = [];
+
   mitglieder: Mitglied[] = [];
+
+  einsatzbereiche: Einsatzbereich[] = [];
 
   zuweisungen: SchichtZuweisung[] = [];
 
@@ -74,7 +86,8 @@ export class Schichten implements OnInit {
     endzeit: '',
     benoetigtePersonen: 1,
     beschreibung: '',
-    veranstaltungId: null as number | null
+    veranstaltungId: null as number | null,
+    einsatzbereichId: null as number | null
   };
 
   bearbeiteteSchicht: {
@@ -86,14 +99,21 @@ export class Schichten implements OnInit {
     benoetigtePersonen: number;
     beschreibung: string;
     veranstaltungId: number | null;
+    einsatzbereichId: number | null;
   } | null = null;
 
   fehlermeldung = '';
 
   ngOnInit(): void {
+
     this.schichtenLaden();
+
     this.veranstaltungenLaden();
+
     this.mitgliederLaden();
+
+    this.einsatzbereicheLaden();
+
     this.zuweisungenLaden();
   }
 
@@ -186,6 +206,33 @@ export class Schichten implements OnInit {
       });
   }
 
+  einsatzbereicheLaden(): void {
+
+    this.einsatzbereichService
+      .alleEinsatzbereicheLaden()
+      .subscribe({
+        next: (daten) => {
+
+          this.einsatzbereiche = daten;
+
+          this.cdr.markForCheck();
+        },
+
+        error: (fehler) => {
+
+          console.error(
+            'Einsatzbereiche konnten nicht geladen werden:',
+            fehler
+          );
+
+          this.fehlermeldung =
+            'Die Einsatzbereiche konnten nicht geladen werden.';
+
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
   zuweisungenLaden(): void {
 
     this.schichtZuweisungService
@@ -269,6 +316,41 @@ export class Schichten implements OnInit {
       });
   }
 
+  einsatzbereicheFuerVeranstaltung(
+    veranstaltungId: number | null
+  ): Einsatzbereich[] {
+
+    if (veranstaltungId === null) {
+      return [];
+    }
+
+    return this.einsatzbereiche.filter(
+      einsatzbereich =>
+        einsatzbereich.veranstaltung?.id ===
+        veranstaltungId
+    );
+  }
+
+  neueVeranstaltungGeaendert(): void {
+
+    this.neueSchicht.einsatzbereichId =
+      null;
+
+    this.cdr.markForCheck();
+  }
+
+  bearbeiteteVeranstaltungGeaendert(): void {
+
+    if (!this.bearbeiteteSchicht) {
+      return;
+    }
+
+    this.bearbeiteteSchicht.einsatzbereichId =
+      null;
+
+    this.cdr.markForCheck();
+  }
+
   mitgliedZuweisen(
     schichtId: number
   ): void {
@@ -322,7 +404,9 @@ export class Schichten implements OnInit {
 
           if (fehler.status === 400) {
 
-            if (typeof fehler.error === 'string') {
+            if (
+              typeof fehler.error === 'string'
+            ) {
 
               this.fehlermeldung =
                 fehler.error;
@@ -394,7 +478,8 @@ export class Schichten implements OnInit {
 
     return this.zuweisungen.filter(
       zuweisung =>
-        zuweisung.schicht.id === schichtId
+        zuweisung.schicht.id ===
+        schichtId
     );
   }
 
@@ -469,7 +554,8 @@ export class Schichten implements OnInit {
             endzeit: '',
             benoetigtePersonen: 1,
             beschreibung: '',
-            veranstaltungId: null
+            veranstaltungId: null,
+            einsatzbereichId: null
           };
 
           this.schichtenLaden();
@@ -566,8 +652,12 @@ export class Schichten implements OnInit {
       beschreibung:
         schicht.beschreibung ?? '',
       veranstaltungId:
-        schicht.veranstaltung?.id ?? null
+        schicht.veranstaltung?.id ?? null,
+      einsatzbereichId:
+        schicht.einsatzbereich?.id ?? null
     };
+
+    this.cdr.markForCheck();
   }
 
   bearbeitungAbbrechen(): void {
@@ -575,6 +665,8 @@ export class Schichten implements OnInit {
     this.fehlermeldung = '';
 
     this.bearbeiteteSchicht = null;
+
+    this.cdr.markForCheck();
   }
 
   schichtSpeichern(): void {
@@ -595,7 +687,9 @@ export class Schichten implements OnInit {
       return;
     }
 
-    if (!this.bearbeiteteSchicht.datum) {
+    if (
+      !this.bearbeiteteSchicht.datum
+    ) {
 
       this.fehlermeldung =
         'Bitte wähle ein Datum aus.';
@@ -603,7 +697,9 @@ export class Schichten implements OnInit {
       return;
     }
 
-    if (!this.bearbeiteteSchicht.startzeit) {
+    if (
+      !this.bearbeiteteSchicht.startzeit
+    ) {
 
       this.fehlermeldung =
         'Bitte gib eine Startzeit ein.';
@@ -611,7 +707,9 @@ export class Schichten implements OnInit {
       return;
     }
 
-    if (!this.bearbeiteteSchicht.endzeit) {
+    if (
+      !this.bearbeiteteSchicht.endzeit
+    ) {
 
       this.fehlermeldung =
         'Bitte gib eine Endzeit ein.';
@@ -667,7 +765,11 @@ export class Schichten implements OnInit {
 
           veranstaltungId:
           this.bearbeiteteSchicht
-            .veranstaltungId
+            .veranstaltungId,
+
+          einsatzbereichId:
+          this.bearbeiteteSchicht
+            .einsatzbereichId
         }
       )
       .subscribe({

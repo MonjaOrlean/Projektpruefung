@@ -10,24 +10,26 @@ import java.time.LocalTime;
 
 public class SchichtUpdateDto {
 
-    @NotBlank(message = "Name darf nicht leer sein.")
+    @NotBlank
     private String name;
 
-    @NotNull(message = "Datum darf nicht leer sein.")
+    @NotNull
     private LocalDate datum;
 
-    @NotNull(message = "Startzeit darf nicht leer sein.")
+    @NotNull
     private LocalTime startzeit;
 
-    @NotNull(message = "Endzeit darf nicht leer sein.")
+    @NotNull
     private LocalTime endzeit;
 
-    @Min(value = 1, message = "Es muss mindestens eine Person benötigt werden.")
+    @Min(1)
     private int benoetigtePersonen;
 
     private String beschreibung;
 
     private Long veranstaltungId;
+
+    private Long einsatzbereichId;
 
     public SchichtUpdateDto() {
     }
@@ -88,13 +90,21 @@ public class SchichtUpdateDto {
         this.veranstaltungId = veranstaltungId;
     }
 
-    @AssertTrue(message = "Die Endzeit darf nicht vor der Startzeit liegen.")
+    public Long getEinsatzbereichId() {
+        return einsatzbereichId;
+    }
+
+    public void setEinsatzbereichId(Long einsatzbereichId) {
+        this.einsatzbereichId = einsatzbereichId;
+    }
+
+    @AssertTrue(message = "Die Endzeit muss nach der Startzeit liegen.")
     public boolean isZeitspanneGueltig() {
 
         if (startzeit == null || endzeit == null) {
             return true;
         }
 
-        return !endzeit.isBefore(startzeit);
+        return endzeit.isAfter(startzeit);
     }
 }

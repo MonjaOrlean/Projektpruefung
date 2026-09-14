@@ -11,27 +11,37 @@ export class SchichtService {
 
   private readonly http = inject(HttpClient);
 
-  private readonly apiUrl = 'http://localhost:8080/api/schichten';
+  private readonly apiUrl =
+    'http://localhost:8080/api/schichten';
 
   alleSchichtenLaden(): Observable<Schicht[]> {
-    return this.http.get<Schicht[]>(this.apiUrl);
+
+    return this.http.get<Schicht[]>(
+      this.apiUrl
+    );
   }
 
-  schichtNachIdLaden(id: number): Observable<Schicht> {
+  schichtNachIdLaden(
+    id: number
+  ): Observable<Schicht> {
+
     return this.http.get<Schicht>(
       `${this.apiUrl}/${id}`
     );
   }
 
-  schichtAnlegen(schicht: {
-    name: string;
-    datum: string;
-    startzeit: string;
-    endzeit: string;
-    benoetigtePersonen: number;
-    beschreibung?: string;
-    veranstaltungId?: number | null;
-  }): Observable<Schicht> {
+  schichtAnlegen(
+    schicht: {
+      name: string;
+      datum: string;
+      startzeit: string;
+      endzeit: string;
+      benoetigtePersonen: number;
+      beschreibung?: string;
+      veranstaltungId?: number | null;
+      einsatzbereichId?: number | null;
+    }
+  ): Observable<Schicht> {
 
     return this.http.post<Schicht>(
       this.apiUrl,
@@ -49,6 +59,7 @@ export class SchichtService {
       benoetigtePersonen: number;
       beschreibung?: string;
       veranstaltungId?: number | null;
+      einsatzbereichId?: number | null;
     }
   ): Observable<Schicht> {
 
@@ -58,7 +69,10 @@ export class SchichtService {
     );
   }
 
-  schichtLoeschen(id: number): Observable<void> {
+  schichtLoeschen(
+    id: number
+  ): Observable<void> {
+
     return this.http.delete<void>(
       `${this.apiUrl}/${id}`
     );

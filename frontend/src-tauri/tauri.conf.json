@@ -27,7 +27,7 @@
     "active": true,
     "targets": "all",
     "resources": [
-      "resources/VereinsplanerBackend/"
+      "resources/backend/"
     ],
     "icon": [
       "icons/32x32.png",

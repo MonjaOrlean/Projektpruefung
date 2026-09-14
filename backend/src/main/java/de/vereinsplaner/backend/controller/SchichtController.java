@@ -2,8 +2,10 @@ package de.vereinsplaner.backend.controller;
 
 import de.vereinsplaner.backend.dto.SchichtCreateDto;
 import de.vereinsplaner.backend.dto.SchichtUpdateDto;
+import de.vereinsplaner.backend.model.Einsatzbereich;
 import de.vereinsplaner.backend.model.Schicht;
 import de.vereinsplaner.backend.model.Veranstaltung;
+import de.vereinsplaner.backend.service.EinsatzbereichService;
 import de.vereinsplaner.backend.service.SchichtService;
 import de.vereinsplaner.backend.service.VeranstaltungService;
 import jakarta.validation.Valid;
@@ -19,13 +21,16 @@ public class SchichtController {
 
     private final SchichtService schichtService;
     private final VeranstaltungService veranstaltungService;
+    private final EinsatzbereichService einsatzbereichService;
 
     public SchichtController(
             SchichtService schichtService,
-            VeranstaltungService veranstaltungService
+            VeranstaltungService veranstaltungService,
+            EinsatzbereichService einsatzbereichService
     ) {
         this.schichtService = schichtService;
         this.veranstaltungService = veranstaltungService;
+        this.einsatzbereichService = einsatzbereichService;
     }
 
     @GetMapping
@@ -48,6 +53,7 @@ public class SchichtController {
     ) {
 
         Veranstaltung veranstaltung = null;
+        Einsatzbereich einsatzbereich = null;
 
         if (dto.getVeranstaltungId() != null) {
 
@@ -56,6 +62,27 @@ public class SchichtController {
                     .orElse(null);
 
             if (veranstaltung == null) {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+
+        if (dto.getEinsatzbereichId() != null) {
+
+            einsatzbereich = einsatzbereichService
+                    .einsatzbereichNachIdLaden(dto.getEinsatzbereichId())
+                    .orElse(null);
+
+            if (einsatzbereich == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            if (veranstaltung == null) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            if (!einsatzbereich.getVeranstaltung().getId()
+                    .equals(veranstaltung.getId())) {
+
                 return ResponseEntity.badRequest().build();
             }
         }
@@ -69,6 +96,7 @@ public class SchichtController {
         schicht.setBenoetigtePersonen(dto.getBenoetigtePersonen());
         schicht.setBeschreibung(dto.getBeschreibung());
         schicht.setVeranstaltung(veranstaltung);
+        schicht.setEinsatzbereich(einsatzbereich);
 
         Schicht gespeichert =
                 schichtService.schichtSpeichern(schicht);
@@ -86,6 +114,7 @@ public class SchichtController {
                 .map(vorhandeneSchicht -> {
 
                     Veranstaltung veranstaltung = null;
+                    Einsatzbereich einsatzbereich = null;
 
                     if (dto.getVeranstaltungId() != null) {
 
@@ -96,6 +125,35 @@ public class SchichtController {
                                 .orElse(null);
 
                         if (veranstaltung == null) {
+                            return ResponseEntity
+                                    .badRequest()
+                                    .<Schicht>build();
+                        }
+                    }
+
+                    if (dto.getEinsatzbereichId() != null) {
+
+                        einsatzbereich = einsatzbereichService
+                                .einsatzbereichNachIdLaden(
+                                        dto.getEinsatzbereichId()
+                                )
+                                .orElse(null);
+
+                        if (einsatzbereich == null) {
+                            return ResponseEntity
+                                    .badRequest()
+                                    .<Schicht>build();
+                        }
+
+                        if (veranstaltung == null) {
+                            return ResponseEntity
+                                    .badRequest()
+                                    .<Schicht>build();
+                        }
+
+                        if (!einsatzbereich.getVeranstaltung().getId()
+                                .equals(veranstaltung.getId())) {
+
                             return ResponseEntity
                                     .badRequest()
                                     .<Schicht>build();
@@ -114,6 +172,9 @@ public class SchichtController {
                     );
                     vorhandeneSchicht.setVeranstaltung(
                             veranstaltung
+                    );
+                    vorhandeneSchicht.setEinsatzbereich(
+                            einsatzbereich
                     );
 
                     Schicht gespeichert =

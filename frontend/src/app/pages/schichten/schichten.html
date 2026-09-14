@@ -87,6 +87,7 @@
           id="veranstaltung"
           name="veranstaltung"
           [(ngModel)]="neueSchicht.veranstaltungId"
+          (ngModelChange)="neueVeranstaltungGeaendert()"
         >
           <option [ngValue]="null">
             Keine Veranstaltung
@@ -100,6 +101,47 @@
             - {{ veranstaltung.datum }}
           </option>
         </select>
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="einsatzbereich">
+          Einsatzbereich
+        </label>
+
+        <select
+          id="einsatzbereich"
+          name="einsatzbereich"
+          [(ngModel)]="neueSchicht.einsatzbereichId"
+          [disabled]="neueSchicht.veranstaltungId === null"
+        >
+          <option [ngValue]="null">
+            Kein Einsatzbereich
+          </option>
+
+          <option
+            *ngFor="
+              let einsatzbereich of
+                einsatzbereicheFuerVeranstaltung(
+                  neueSchicht.veranstaltungId
+                )
+            "
+            [ngValue]="einsatzbereich.id"
+          >
+            {{ einsatzbereich.name }}
+          </option>
+        </select>
+
+        <p
+          class="hinweis"
+          *ngIf="
+            neueSchicht.veranstaltungId !== null &&
+            einsatzbereicheFuerVeranstaltung(
+              neueSchicht.veranstaltungId
+            ).length === 0
+          "
+        >
+          Für diese Veranstaltung sind noch keine Einsatzbereiche vorhanden.
+        </p>
       </div>
 
       <div class="formular-gruppe">
@@ -212,6 +254,7 @@
           id="bearbeiten-veranstaltung"
           name="bearbeitenVeranstaltung"
           [(ngModel)]="bearbeiteteSchicht.veranstaltungId"
+          (ngModelChange)="bearbeiteteVeranstaltungGeaendert()"
         >
           <option [ngValue]="null">
             Keine Veranstaltung
@@ -225,6 +268,47 @@
             - {{ veranstaltung.datum }}
           </option>
         </select>
+      </div>
+
+      <div class="formular-gruppe">
+        <label for="bearbeiten-einsatzbereich">
+          Einsatzbereich
+        </label>
+
+        <select
+          id="bearbeiten-einsatzbereich"
+          name="bearbeitenEinsatzbereich"
+          [(ngModel)]="bearbeiteteSchicht.einsatzbereichId"
+          [disabled]="bearbeiteteSchicht.veranstaltungId === null"
+        >
+          <option [ngValue]="null">
+            Kein Einsatzbereich
+          </option>
+
+          <option
+            *ngFor="
+              let einsatzbereich of
+                einsatzbereicheFuerVeranstaltung(
+                  bearbeiteteSchicht.veranstaltungId
+                )
+            "
+            [ngValue]="einsatzbereich.id"
+          >
+            {{ einsatzbereich.name }}
+          </option>
+        </select>
+
+        <p
+          class="hinweis"
+          *ngIf="
+            bearbeiteteSchicht.veranstaltungId !== null &&
+            einsatzbereicheFuerVeranstaltung(
+              bearbeiteteSchicht.veranstaltungId
+            ).length === 0
+          "
+        >
+          Für diese Veranstaltung sind noch keine Einsatzbereiche vorhanden.
+        </p>
       </div>
 
       <div class="formular-gruppe">
@@ -290,6 +374,13 @@
             Veranstaltung:
             <strong>
               {{ schicht.veranstaltung?.name || 'Keine' }}
+            </strong>
+          </p>
+
+          <p>
+            Einsatzbereich:
+            <strong>
+              {{ schicht.einsatzbereich?.name || 'Keiner' }}
             </strong>
           </p>
         </div>

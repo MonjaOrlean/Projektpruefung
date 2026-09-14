@@ -12,8 +12,19 @@ npm-debug.log*
 target/
 *.log
 
+# Generierte Backend-Pakete / portable Runtime
+backend/package/
+backend/runtime/
+
 # Tauri / Rust
 src-tauri/target/
+frontend/src-tauri/target/
+
+# Generierte Tauri-Backend-Ressourcen
+frontend/src-tauri/resources/backend/
+
+# Alte jpackage-Ressourcen
+frontend/src-tauri/resources/VereinsplanerBackend/
 
 # SQLite
 *.db
