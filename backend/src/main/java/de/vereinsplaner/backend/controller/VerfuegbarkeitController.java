@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/verfuegbarkeiten")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://tauri.localhost"})
 public class VerfuegbarkeitController {
 
     private final VerfuegbarkeitService verfuegbarkeitService;

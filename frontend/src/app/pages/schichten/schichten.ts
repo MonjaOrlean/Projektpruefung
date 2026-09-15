@@ -213,6 +213,11 @@ export class Schichten implements OnInit {
       .subscribe({
         next: (daten) => {
 
+          console.log(
+            'GELADENE EINSATZBEREICHE:',
+            daten
+          );
+
           this.einsatzbereiche = daten;
 
           this.cdr.markForCheck();
@@ -324,10 +329,13 @@ export class Schichten implements OnInit {
       return [];
     }
 
+    const id = Number(veranstaltungId);
+
     return this.einsatzbereiche.filter(
       einsatzbereich =>
-        einsatzbereich.veranstaltung?.id ===
-        veranstaltungId
+        Number(
+          einsatzbereich.veranstaltung?.id
+        ) === id
     );
   }
 
@@ -480,6 +488,29 @@ export class Schichten implements OnInit {
       zuweisung =>
         zuweisung.schicht.id ===
         schichtId
+    );
+  }
+
+  auswaehlbareMitglieder(
+    schichtId: number
+  ): Mitglied[] {
+
+    const bereitsZugewieseneIds =
+      this.zuweisungenFuerSchicht(
+        schichtId
+      )
+        .map(
+          zuweisung =>
+            zuweisung.mitglied.id
+        );
+
+    return this.mitglieder.filter(
+      mitglied =>
+        mitglied.id !== undefined &&
+        mitglied.aktiv !== false &&
+        !bereitsZugewieseneIds.includes(
+          mitglied.id
+        )
     );
   }
 

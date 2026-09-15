@@ -1,29 +1,33 @@
 package de.vereinsplaner.backend.controller;
 
 import de.vereinsplaner.backend.dto.EinsatzplanSchichtDto;
+import de.vereinsplaner.backend.service.EinsatzplanExcelService;
 import de.vereinsplaner.backend.service.EinsatzplanService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/einsatzplan")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://tauri.localhost"})
 public class EinsatzplanController {
 
     private final EinsatzplanService einsatzplanService;
 
+    private final EinsatzplanExcelService einsatzplanExcelService;
+
     public EinsatzplanController(
-            EinsatzplanService einsatzplanService
+            EinsatzplanService einsatzplanService,
+            EinsatzplanExcelService einsatzplanExcelService
     ) {
         this.einsatzplanService = einsatzplanService;
+        this.einsatzplanExcelService = einsatzplanExcelService;
     }
 
     @GetMapping
@@ -36,137 +40,32 @@ public class EinsatzplanController {
     }
 
     @GetMapping("/export")
-    public ResponseEntity<byte[]> einsatzplanExportieren() {
+    public ResponseEntity<String> einsatzplanExportieren() {
 
-        List<EinsatzplanSchichtDto> einsatzplan =
-                einsatzplanService.einsatzplanLaden();
+        try {
 
-        StringBuilder csv = new StringBuilder();
+            List<EinsatzplanSchichtDto> einsatzplan =
+                    einsatzplanService.einsatzplanLaden();
 
-        /*
-         * UTF-8 BOM:
-         * Damit Excel Umlaute wie ä, ö und ü
-         * korrekt erkennt.
-         */
-        csv.append('\uFEFF');
+            Path datei =
+                    einsatzplanExcelService
+                            .einsatzplanAlsExcelSpeichern(
+                                    einsatzplan
+                            );
 
-        csv.append(
-                "Schicht;Datum;Startzeit;Endzeit;Veranstaltung;"
-        );
-
-        csv.append(
-                "Benötigt;Zugewiesen;Fehlend;Status;Mitglieder\n"
-        );
-
-        for (EinsatzplanSchichtDto schicht : einsatzplan) {
-
-            csv.append(
-                    csvWert(schicht.getSchichtName())
-            );
-            csv.append(";");
-
-            csv.append(
-                    csvWert(
-                            String.valueOf(
-                                    schicht.getDatum()
-                            )
-                    )
-            );
-            csv.append(";");
-
-            csv.append(
-                    csvWert(
-                            String.valueOf(
-                                    schicht.getStartzeit()
-                            )
-                    )
-            );
-            csv.append(";");
-
-            csv.append(
-                    csvWert(
-                            String.valueOf(
-                                    schicht.getEndzeit()
-                            )
-                    )
-            );
-            csv.append(";");
-
-            csv.append(
-                    csvWert(
-                            schicht.getVeranstaltungName()
-                    )
-            );
-            csv.append(";");
-
-            csv.append(
-                    schicht.getBenoetigtePersonen()
-            );
-            csv.append(";");
-
-            csv.append(
-                    schicht.getZugewiesenePersonen()
-            );
-            csv.append(";");
-
-            csv.append(
-                    schicht.getFehlendePersonen()
-            );
-            csv.append(";");
-
-            csv.append(
-                    csvWert(
-                            schicht.isUnterbesetzt()
-                                    ? "Unterbesetzt"
-                                    : "Ausreichend besetzt"
-                    )
-            );
-            csv.append(";");
-
-            csv.append(
-                    csvWert(
-                            String.join(
-                                    ", ",
-                                    schicht.getMitglieder()
-                            )
-                    )
+            return ResponseEntity.ok(
+                    datei.toAbsolutePath().toString()
             );
 
-            csv.append("\n");
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+            return ResponseEntity
+                    .internalServerError()
+                    .body(
+                            "Der Einsatzplan konnte nicht exportiert werden."
+                    );
         }
-
-        byte[] dateiInhalt =
-                csv.toString()
-                        .getBytes(
-                                StandardCharsets.UTF_8
-                        );
-
-        return ResponseEntity
-                .ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"einsatzplan.csv\""
-                )
-                .contentType(
-                        MediaType.parseMediaType(
-                                "text/csv; charset=UTF-8"
-                        )
-                )
-                .body(dateiInhalt);
-    }
-
-    private String csvWert(String wert) {
-
-        if (wert == null) {
-            return "";
-        }
-
-        String bereinigt =
-                wert.replace(
-                        "\"",
-                        "\"\""
-                );
-
-        return "\"" + bereinigt + "\"";
     }
 }

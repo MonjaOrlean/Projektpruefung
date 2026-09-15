@@ -1,4 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -26,7 +32,11 @@ export class Verfuegbarkeiten implements OnInit {
   private readonly mitgliedService =
     inject(MitgliedService);
 
+  private readonly cdr =
+    inject(ChangeDetectorRef);
+
   verfuegbarkeiten: Verfuegbarkeit[] = [];
+
   mitglieder: Mitglied[] = [];
 
   neueVerfuegbarkeit = {
@@ -59,7 +69,10 @@ export class Verfuegbarkeiten implements OnInit {
       .alleVerfuegbarkeitenLaden()
       .subscribe({
         next: (daten) => {
-          this.verfuegbarkeiten = daten;
+
+          this.verfuegbarkeiten = [...daten];
+
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -71,6 +84,8 @@ export class Verfuegbarkeiten implements OnInit {
 
           this.fehlermeldung =
             'Die Verfügbarkeiten konnten nicht geladen werden.';
+
+          this.cdr.detectChanges();
         }
       });
   }
@@ -81,14 +96,20 @@ export class Verfuegbarkeiten implements OnInit {
       .alleMitgliederLaden()
       .subscribe({
         next: (daten) => {
-          this.mitglieder = daten;
+
+          this.mitglieder = [...daten];
+
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
+
           console.error(
             'Mitglieder konnten nicht geladen werden:',
             fehler
           );
+
+          this.cdr.detectChanges();
         }
       });
   }
@@ -98,22 +119,31 @@ export class Verfuegbarkeiten implements OnInit {
     this.fehlermeldung = '';
 
     if (!this.neueVerfuegbarkeit.datum) {
+
       this.fehlermeldung =
         'Bitte wähle ein Datum aus.';
+
+      this.cdr.detectChanges();
 
       return;
     }
 
     if (!this.neueVerfuegbarkeit.startzeit) {
+
       this.fehlermeldung =
         'Bitte gib eine Startzeit ein.';
+
+      this.cdr.detectChanges();
 
       return;
     }
 
     if (!this.neueVerfuegbarkeit.endzeit) {
+
       this.fehlermeldung =
         'Bitte gib eine Endzeit ein.';
+
+      this.cdr.detectChanges();
 
       return;
     }
@@ -122,15 +152,23 @@ export class Verfuegbarkeiten implements OnInit {
       this.neueVerfuegbarkeit.endzeit <
       this.neueVerfuegbarkeit.startzeit
     ) {
+
       this.fehlermeldung =
         'Die Endzeit darf nicht vor der Startzeit liegen.';
+
+      this.cdr.detectChanges();
 
       return;
     }
 
-    if (this.neueVerfuegbarkeit.mitgliedId === null) {
+    if (
+      this.neueVerfuegbarkeit.mitgliedId === null
+    ) {
+
       this.fehlermeldung =
         'Bitte wähle ein Mitglied aus.';
+
+      this.cdr.detectChanges();
 
       return;
     }
@@ -139,19 +177,21 @@ export class Verfuegbarkeiten implements OnInit {
       .verfuegbarkeitAnlegen({
         datum:
         this.neueVerfuegbarkeit.datum,
+
         startzeit:
         this.neueVerfuegbarkeit.startzeit,
+
         endzeit:
         this.neueVerfuegbarkeit.endzeit,
+
         bemerkung:
         this.neueVerfuegbarkeit.bemerkung,
+
         mitgliedId:
         this.neueVerfuegbarkeit.mitgliedId
       })
       .subscribe({
         next: () => {
-
-          this.verfuegbarkeitenLaden();
 
           this.neueVerfuegbarkeit = {
             datum: '',
@@ -160,6 +200,10 @@ export class Verfuegbarkeiten implements OnInit {
             bemerkung: '',
             mitgliedId: null
           };
+
+          this.verfuegbarkeitenLaden();
+
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -171,27 +215,43 @@ export class Verfuegbarkeiten implements OnInit {
 
           if (fehler.status === 400) {
 
-            if (fehler.error?.zeitspanneGueltig) {
+            if (
+              fehler.error?.zeitspanneGueltig
+            ) {
+
               this.fehlermeldung =
                 fehler.error.zeitspanneGueltig;
-            }
-            else if (fehler.error?.datum) {
+
+            } else if (
+              fehler.error?.datum
+            ) {
+
               this.fehlermeldung =
                 fehler.error.datum;
-            }
-            else if (fehler.error?.startzeit) {
+
+            } else if (
+              fehler.error?.startzeit
+            ) {
+
               this.fehlermeldung =
                 fehler.error.startzeit;
-            }
-            else if (fehler.error?.endzeit) {
+
+            } else if (
+              fehler.error?.endzeit
+            ) {
+
               this.fehlermeldung =
                 fehler.error.endzeit;
-            }
-            else if (fehler.error?.mitgliedId) {
+
+            } else if (
+              fehler.error?.mitgliedId
+            ) {
+
               this.fehlermeldung =
                 fehler.error.mitgliedId;
-            }
-            else {
+
+            } else {
+
               this.fehlermeldung =
                 'Bitte überprüfe deine Eingaben.';
             }
@@ -201,6 +261,8 @@ export class Verfuegbarkeiten implements OnInit {
             this.fehlermeldung =
               'Die Verfügbarkeit konnte nicht gespeichert werden.';
           }
+
+          this.cdr.detectChanges();
         }
       });
   }
@@ -215,28 +277,40 @@ export class Verfuegbarkeiten implements OnInit {
       verfuegbarkeit.id === undefined ||
       verfuegbarkeit.mitglied.id === undefined
     ) {
+
       return;
     }
 
     this.bearbeiteteVerfuegbarkeit = {
       id:
       verfuegbarkeit.id,
+
       datum:
       verfuegbarkeit.datum,
+
       startzeit:
       verfuegbarkeit.startzeit,
+
       endzeit:
       verfuegbarkeit.endzeit,
+
       bemerkung:
         verfuegbarkeit.bemerkung ?? '',
+
       mitgliedId:
       verfuegbarkeit.mitglied.id
     };
+
+    this.cdr.detectChanges();
   }
 
   bearbeitungAbbrechen(): void {
+
     this.fehlermeldung = '';
+
     this.bearbeiteteVerfuegbarkeit = null;
+
+    this.cdr.detectChanges();
   }
 
   verfuegbarkeitSpeichern(): void {
@@ -247,23 +321,38 @@ export class Verfuegbarkeiten implements OnInit {
       return;
     }
 
-    if (!this.bearbeiteteVerfuegbarkeit.datum) {
+    if (
+      !this.bearbeiteteVerfuegbarkeit.datum
+    ) {
+
       this.fehlermeldung =
         'Bitte wähle ein Datum aus.';
 
+      this.cdr.detectChanges();
+
       return;
     }
 
-    if (!this.bearbeiteteVerfuegbarkeit.startzeit) {
+    if (
+      !this.bearbeiteteVerfuegbarkeit.startzeit
+    ) {
+
       this.fehlermeldung =
         'Bitte gib eine Startzeit ein.';
 
+      this.cdr.detectChanges();
+
       return;
     }
 
-    if (!this.bearbeiteteVerfuegbarkeit.endzeit) {
+    if (
+      !this.bearbeiteteVerfuegbarkeit.endzeit
+    ) {
+
       this.fehlermeldung =
         'Bitte gib eine Endzeit ein.';
+
+      this.cdr.detectChanges();
 
       return;
     }
@@ -272,8 +361,11 @@ export class Verfuegbarkeiten implements OnInit {
       this.bearbeiteteVerfuegbarkeit.endzeit <
       this.bearbeiteteVerfuegbarkeit.startzeit
     ) {
+
       this.fehlermeldung =
         'Die Endzeit darf nicht vor der Startzeit liegen.';
+
+      this.cdr.detectChanges();
 
       return;
     }
@@ -284,12 +376,16 @@ export class Verfuegbarkeiten implements OnInit {
         {
           datum:
           this.bearbeiteteVerfuegbarkeit.datum,
+
           startzeit:
           this.bearbeiteteVerfuegbarkeit.startzeit,
+
           endzeit:
           this.bearbeiteteVerfuegbarkeit.endzeit,
+
           bemerkung:
           this.bearbeiteteVerfuegbarkeit.bemerkung,
+
           mitgliedId:
           this.bearbeiteteVerfuegbarkeit.mitgliedId
         }
@@ -297,9 +393,12 @@ export class Verfuegbarkeiten implements OnInit {
       .subscribe({
         next: () => {
 
-          this.bearbeiteteVerfuegbarkeit = null;
+          this.bearbeiteteVerfuegbarkeit =
+            null;
 
           this.verfuegbarkeitenLaden();
+
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -311,10 +410,15 @@ export class Verfuegbarkeiten implements OnInit {
 
           if (fehler.status === 400) {
 
-            if (fehler.error?.zeitspanneGueltig) {
+            if (
+              fehler.error?.zeitspanneGueltig
+            ) {
+
               this.fehlermeldung =
                 fehler.error.zeitspanneGueltig;
+
             } else {
+
               this.fehlermeldung =
                 'Bitte überprüfe deine Eingaben.';
             }
@@ -324,11 +428,15 @@ export class Verfuegbarkeiten implements OnInit {
             this.fehlermeldung =
               'Die Verfügbarkeit konnte nicht gespeichert werden.';
           }
+
+          this.cdr.detectChanges();
         }
       });
   }
 
-  verfuegbarkeitLoeschen(id?: number): void {
+  verfuegbarkeitLoeschen(
+    id?: number
+  ): void {
 
     this.fehlermeldung = '';
 
@@ -340,7 +448,10 @@ export class Verfuegbarkeiten implements OnInit {
       .verfuegbarkeitLoeschen(id)
       .subscribe({
         next: () => {
+
           this.verfuegbarkeitenLaden();
+
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -352,6 +463,8 @@ export class Verfuegbarkeiten implements OnInit {
 
           this.fehlermeldung =
             'Die Verfügbarkeit konnte nicht gelöscht werden.';
+
+          this.cdr.detectChanges();
         }
       });
   }

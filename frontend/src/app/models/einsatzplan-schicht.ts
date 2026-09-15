@@ -12,6 +12,8 @@ export interface EinsatzplanSchicht {
 
   veranstaltungName: string | null;
 
+  einsatzbereichName: string | null;
+
   benoetigtePersonen: number;
 
   zugewiesenePersonen: number;

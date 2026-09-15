@@ -89,6 +89,7 @@
           [(ngModel)]="neueSchicht.veranstaltungId"
           (ngModelChange)="neueVeranstaltungGeaendert()"
         >
+
           <option [ngValue]="null">
             Keine Veranstaltung
           </option>
@@ -100,10 +101,12 @@
             {{ veranstaltung.name }}
             - {{ veranstaltung.datum }}
           </option>
+
         </select>
       </div>
 
       <div class="formular-gruppe">
+
         <label for="einsatzbereich">
           Einsatzbereich
         </label>
@@ -114,6 +117,7 @@
           [(ngModel)]="neueSchicht.einsatzbereichId"
           [disabled]="neueSchicht.veranstaltungId === null"
         >
+
           <option [ngValue]="null">
             Kein Einsatzbereich
           </option>
@@ -129,6 +133,7 @@
           >
             {{ einsatzbereich.name }}
           </option>
+
         </select>
 
         <p
@@ -142,9 +147,11 @@
         >
           Für diese Veranstaltung sind noch keine Einsatzbereiche vorhanden.
         </p>
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="beschreibung">
           Beschreibung
         </label>
@@ -155,6 +162,7 @@
           rows="4"
           [(ngModel)]="neueSchicht.beschreibung"
         ></textarea>
+
       </div>
 
       <button type="submit">
@@ -175,6 +183,7 @@
     <form (ngSubmit)="schichtSpeichern()">
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-name">
           Name
         </label>
@@ -186,9 +195,11 @@
           [(ngModel)]="bearbeiteteSchicht.name"
           required
         >
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-datum">
           Datum
         </label>
@@ -200,9 +211,11 @@
           [(ngModel)]="bearbeiteteSchicht.datum"
           required
         >
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-startzeit">
           Startzeit
         </label>
@@ -214,9 +227,11 @@
           [(ngModel)]="bearbeiteteSchicht.startzeit"
           required
         >
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-endzeit">
           Endzeit
         </label>
@@ -228,9 +243,11 @@
           [(ngModel)]="bearbeiteteSchicht.endzeit"
           required
         >
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-benoetigtePersonen">
           Benötigte Personen
         </label>
@@ -243,9 +260,11 @@
           [(ngModel)]="bearbeiteteSchicht.benoetigtePersonen"
           required
         >
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-veranstaltung">
           Veranstaltung
         </label>
@@ -256,6 +275,7 @@
           [(ngModel)]="bearbeiteteSchicht.veranstaltungId"
           (ngModelChange)="bearbeiteteVeranstaltungGeaendert()"
         >
+
           <option [ngValue]="null">
             Keine Veranstaltung
           </option>
@@ -267,10 +287,13 @@
             {{ veranstaltung.name }}
             - {{ veranstaltung.datum }}
           </option>
+
         </select>
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-einsatzbereich">
           Einsatzbereich
         </label>
@@ -281,6 +304,7 @@
           [(ngModel)]="bearbeiteteSchicht.einsatzbereichId"
           [disabled]="bearbeiteteSchicht.veranstaltungId === null"
         >
+
           <option [ngValue]="null">
             Kein Einsatzbereich
           </option>
@@ -296,6 +320,7 @@
           >
             {{ einsatzbereich.name }}
           </option>
+
         </select>
 
         <p
@@ -309,9 +334,11 @@
         >
           Für diese Veranstaltung sind noch keine Einsatzbereiche vorhanden.
         </p>
+
       </div>
 
       <div class="formular-gruppe">
+
         <label for="bearbeiten-beschreibung">
           Beschreibung
         </label>
@@ -322,6 +349,7 @@
           rows="4"
           [(ngModel)]="bearbeiteteSchicht.beschreibung"
         ></textarea>
+
       </div>
 
       <div class="button-gruppe">
@@ -360,7 +388,10 @@
       <div class="schicht-kopf">
 
         <div>
-          <h3>{{ schicht.name }}</h3>
+
+          <h3>
+            {{ schicht.name }}
+          </h3>
 
           <p>
             {{ schicht.datum }}
@@ -383,6 +414,7 @@
               {{ schicht.einsatzbereich?.name || 'Keiner' }}
             </strong>
           </p>
+
         </div>
 
         <div
@@ -477,7 +509,9 @@
             <option
               *ngFor="
                 let mitglied of
-                  verfuegbareMitglieder[schicht.id] || []
+                  auswaehlbareMitglieder(
+                    schicht.id
+                  )
               "
               [ngValue]="mitglied.id"
             >
@@ -499,18 +533,21 @@
         <p
           class="hinweis"
           *ngIf="
-            (verfuegbareMitglieder[schicht.id] || []).length === 0
+            auswaehlbareMitglieder(
+              schicht.id
+            ).length === 0
           "
         >
-          Für diese Schicht sind aktuell keine Mitglieder vollständig verfügbar.
+          Es stehen keine weiteren aktiven Mitglieder zur Auswahl.
         </p>
 
         <h4>Zugewiesene Mitglieder</h4>
 
         <p
           *ngIf="
-            zuweisungenFuerSchicht(schicht.id)
-              .length === 0
+            zuweisungenFuerSchicht(
+              schicht.id
+            ).length === 0
           "
         >
           Noch keine Mitglieder zugewiesen.
@@ -520,7 +557,9 @@
           class="zugewiesenes-mitglied"
           *ngFor="
             let zuweisung of
-              zuweisungenFuerSchicht(schicht.id)
+              zuweisungenFuerSchicht(
+                schicht.id
+              )
           "
         >
 

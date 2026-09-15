@@ -3,12 +3,14 @@
   "productName": "Vereinsplaner",
   "version": "0.1.0",
   "identifier": "de.vereinsplaner.desktop",
+
   "build": {
     "beforeDevCommand": "npm start",
     "devUrl": "http://localhost:4200",
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist/frontend/browser"
   },
+
   "app": {
     "windows": [
       {
@@ -23,12 +25,15 @@
       "csp": null
     }
   },
+
   "bundle": {
     "active": true,
     "targets": "all",
+
     "resources": [
       "resources/backend/"
     ],
+
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -36,6 +41,13 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+
+    "windows": {
+      "wix": {
+        "language": "de-DE"
+      }
+    },
+
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }

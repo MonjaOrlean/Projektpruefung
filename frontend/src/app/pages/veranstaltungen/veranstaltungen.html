@@ -9,6 +9,17 @@
     {{ fehlermeldung }}
   </div>
 
+  <div
+    class="erfolgsmeldung"
+    *ngIf="erfolgsmeldung"
+  >
+    {{ erfolgsmeldung }}
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- NEUE VERANSTALTUNG -->
+  <!-- ===================================================== -->
+
   <section class="formular-bereich">
 
     <h2>Neue Veranstaltung</h2>
@@ -17,6 +28,7 @@
 
       <div class="formular-gruppe">
         <label for="name">Name</label>
+
         <input
           id="name"
           name="name"
@@ -28,6 +40,7 @@
 
       <div class="formular-gruppe">
         <label for="datum">Datum</label>
+
         <input
           id="datum"
           name="datum"
@@ -39,6 +52,7 @@
 
       <div class="formular-gruppe">
         <label for="startzeit">Startzeit</label>
+
         <input
           id="startzeit"
           name="startzeit"
@@ -49,6 +63,7 @@
 
       <div class="formular-gruppe">
         <label for="endzeit">Endzeit</label>
+
         <input
           id="endzeit"
           name="endzeit"
@@ -59,6 +74,7 @@
 
       <div class="formular-gruppe">
         <label for="ort">Ort</label>
+
         <input
           id="ort"
           name="ort"
@@ -68,13 +84,18 @@
       </div>
 
       <div class="formular-gruppe">
-        <label for="beschreibung">Beschreibung</label>
+
+        <label for="beschreibung">
+          Beschreibung
+        </label>
+
         <textarea
           id="beschreibung"
           name="beschreibung"
           rows="4"
           [(ngModel)]="neueVeranstaltung.beschreibung"
         ></textarea>
+
       </div>
 
       <button type="submit">
@@ -84,6 +105,10 @@
     </form>
 
   </section>
+
+  <!-- ===================================================== -->
+  <!-- VERANSTALTUNG BEARBEITEN -->
+  <!-- ===================================================== -->
 
   <section
     class="formular-bereich"
@@ -95,7 +120,11 @@
     <form (ngSubmit)="veranstaltungSpeichern()">
 
       <div class="formular-gruppe">
-        <label for="bearbeiten-name">Name</label>
+
+        <label for="bearbeiten-name">
+          Name
+        </label>
+
         <input
           id="bearbeiten-name"
           name="bearbeitenName"
@@ -103,10 +132,15 @@
           [(ngModel)]="bearbeiteteVeranstaltung.name"
           required
         >
+
       </div>
 
       <div class="formular-gruppe">
-        <label for="bearbeiten-datum">Datum</label>
+
+        <label for="bearbeiten-datum">
+          Datum
+        </label>
+
         <input
           id="bearbeiten-datum"
           name="bearbeitenDatum"
@@ -114,57 +148,83 @@
           [(ngModel)]="bearbeiteteVeranstaltung.datum"
           required
         >
+
       </div>
 
       <div class="formular-gruppe">
-        <label for="bearbeiten-startzeit">Startzeit</label>
+
+        <label for="bearbeiten-startzeit">
+          Startzeit
+        </label>
+
         <input
           id="bearbeiten-startzeit"
           name="bearbeitenStartzeit"
           type="time"
           [(ngModel)]="bearbeiteteVeranstaltung.startzeit"
         >
+
       </div>
 
       <div class="formular-gruppe">
-        <label for="bearbeiten-endzeit">Endzeit</label>
+
+        <label for="bearbeiten-endzeit">
+          Endzeit
+        </label>
+
         <input
           id="bearbeiten-endzeit"
           name="bearbeitenEndzeit"
           type="time"
           [(ngModel)]="bearbeiteteVeranstaltung.endzeit"
         >
+
       </div>
 
       <div class="formular-gruppe">
-        <label for="bearbeiten-ort">Ort</label>
+
+        <label for="bearbeiten-ort">
+          Ort
+        </label>
+
         <input
           id="bearbeiten-ort"
           name="bearbeitenOrt"
           type="text"
           [(ngModel)]="bearbeiteteVeranstaltung.ort"
         >
+
       </div>
 
       <div class="formular-gruppe">
-        <label for="bearbeiten-beschreibung">Beschreibung</label>
+
+        <label for="bearbeiten-beschreibung">
+          Beschreibung
+        </label>
+
         <textarea
           id="bearbeiten-beschreibung"
           name="bearbeitenBeschreibung"
           rows="4"
           [(ngModel)]="bearbeiteteVeranstaltung.beschreibung"
         ></textarea>
+
       </div>
 
       <div class="formular-gruppe checkbox-gruppe">
+
         <label>
+
           <input
             type="checkbox"
             name="bearbeitenAktiv"
             [(ngModel)]="bearbeiteteVeranstaltung.aktiv"
           >
+
           Veranstaltung aktiv
+
         </label>
+
       </div>
 
       <div class="button-gruppe">
@@ -187,6 +247,10 @@
 
   </section>
 
+  <!-- ===================================================== -->
+  <!-- VERANSTALTUNGSLISTE -->
+  <!-- ===================================================== -->
+
   <section class="listen-bereich">
 
     <h2>Veranstaltungen</h2>
@@ -195,60 +259,336 @@
       Es sind noch keine Veranstaltungen vorhanden.
     </p>
 
-    <table *ngIf="veranstaltungen.length > 0">
+    <div
+      class="tabellen-container"
+      *ngIf="veranstaltungen.length > 0"
+    >
 
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Datum</th>
-        <th>Start</th>
-        <th>Ende</th>
-        <th>Ort</th>
-        <th>Status</th>
-        <th>Aktionen</th>
-      </tr>
-      </thead>
+      <table>
 
-      <tbody>
+        <thead>
 
-      <tr *ngFor="let veranstaltung of veranstaltungen">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Datum</th>
+          <th>Start</th>
+          <th>Ende</th>
+          <th>Ort</th>
+          <th>Status</th>
+          <th>Aktionen</th>
+        </tr>
 
-        <td>{{ veranstaltung.id }}</td>
-        <td>{{ veranstaltung.name }}</td>
-        <td>{{ veranstaltung.datum }}</td>
-        <td>{{ veranstaltung.startzeit }}</td>
-        <td>{{ veranstaltung.endzeit }}</td>
-        <td>{{ veranstaltung.ort }}</td>
-        <td>
-          {{ veranstaltung.aktiv ? 'Aktiv' : 'Inaktiv' }}
-        </td>
+        </thead>
 
-        <td class="aktionen">
+        <tbody>
 
-          <button
-            type="button"
-            class="bearbeiten"
-            (click)="bearbeitungStarten(veranstaltung)"
+        <tr
+          *ngFor="let veranstaltung of veranstaltungen"
+        >
+
+          <td>
+            {{ veranstaltung.id }}
+          </td>
+
+          <td>
+            {{ veranstaltung.name }}
+          </td>
+
+          <td>
+            {{ veranstaltung.datum }}
+          </td>
+
+          <td>
+            {{ veranstaltung.startzeit || '-' }}
+          </td>
+
+          <td>
+            {{ veranstaltung.endzeit || '-' }}
+          </td>
+
+          <td>
+            {{ veranstaltung.ort || '-' }}
+          </td>
+
+          <td>
+
+            <span
+              class="status-aktiv"
+              *ngIf="veranstaltung.aktiv"
+            >
+              Aktiv
+            </span>
+
+            <span
+              class="status-inaktiv"
+              *ngIf="!veranstaltung.aktiv"
+            >
+              Inaktiv
+            </span>
+
+          </td>
+
+          <td class="aktionen">
+
+            <button
+              type="button"
+              class="einsatzbereiche-button"
+              (click)="einsatzbereicheOeffnen(veranstaltung)"
+            >
+              Einsatzbereiche
+            </button>
+
+            <button
+              type="button"
+              class="bearbeiten"
+              (click)="bearbeitungStarten(veranstaltung)"
+            >
+              Bearbeiten
+            </button>
+
+            <button
+              type="button"
+              class="loeschen"
+              (click)="veranstaltungLoeschen(veranstaltung.id)"
+            >
+              Löschen
+            </button>
+
+          </td>
+
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+  <!-- ===================================================== -->
+  <!-- EINSATZBEREICHE -->
+  <!-- ===================================================== -->
+
+  <section
+    class="einsatzbereich-bereich"
+    *ngIf="ausgewaehlteVeranstaltung"
+  >
+
+    <div class="einsatzbereich-kopf">
+
+      <div>
+
+        <h2>
+          Einsatzbereiche
+        </h2>
+
+        <p>
+          Veranstaltung:
+          <strong>
+            {{ ausgewaehlteVeranstaltung.name }}
+          </strong>
+        </p>
+
+      </div>
+
+      <button
+        type="button"
+        class="abbrechen"
+        (click)="einsatzbereichVerwaltungSchliessen()"
+      >
+        Schließen
+      </button>
+
+    </div>
+
+    <!-- NEUEN EINSATZBEREICH ANLEGEN -->
+
+    <div class="einsatzbereich-formular">
+
+      <h3>
+        Neuen Einsatzbereich anlegen
+      </h3>
+
+      <form
+        (ngSubmit)="einsatzbereichAnlegen()"
+      >
+
+        <div class="formular-gruppe">
+
+          <label for="einsatzbereich-name">
+            Name
+          </label>
+
+          <input
+            id="einsatzbereich-name"
+            name="einsatzbereichName"
+            type="text"
+            placeholder="z. B. Ausschank"
+            [(ngModel)]="neuerEinsatzbereich.name"
+            required
           >
-            Bearbeiten
+
+        </div>
+
+        <div class="formular-gruppe">
+
+          <label for="einsatzbereich-beschreibung">
+            Beschreibung
+          </label>
+
+          <textarea
+            id="einsatzbereich-beschreibung"
+            name="einsatzbereichBeschreibung"
+            rows="3"
+            placeholder="Optionale Beschreibung"
+            [(ngModel)]="neuerEinsatzbereich.beschreibung"
+          ></textarea>
+
+        </div>
+
+        <button type="submit">
+          Einsatzbereich anlegen
+        </button>
+
+      </form>
+
+    </div>
+
+    <!-- EINSATZBEREICH BEARBEITEN -->
+
+    <div
+      class="einsatzbereich-formular bearbeiten-box"
+      *ngIf="bearbeiteterEinsatzbereich"
+    >
+
+      <h3>
+        Einsatzbereich bearbeiten
+      </h3>
+
+      <form
+        (ngSubmit)="einsatzbereichSpeichern()"
+      >
+
+        <div class="formular-gruppe">
+
+          <label for="einsatzbereich-bearbeiten-name">
+            Name
+          </label>
+
+          <input
+            id="einsatzbereich-bearbeiten-name"
+            name="einsatzbereichBearbeitenName"
+            type="text"
+            [(ngModel)]="bearbeiteterEinsatzbereich.name"
+            required
+          >
+
+        </div>
+
+        <div class="formular-gruppe">
+
+          <label for="einsatzbereich-bearbeiten-beschreibung">
+            Beschreibung
+          </label>
+
+          <textarea
+            id="einsatzbereich-bearbeiten-beschreibung"
+            name="einsatzbereichBearbeitenBeschreibung"
+            rows="3"
+            [(ngModel)]="bearbeiteterEinsatzbereich.beschreibung"
+          ></textarea>
+
+        </div>
+
+        <div class="button-gruppe">
+
+          <button type="submit">
+            Änderungen speichern
           </button>
 
           <button
             type="button"
-            class="loeschen"
-            (click)="veranstaltungLoeschen(veranstaltung.id)"
+            class="abbrechen"
+            (click)="einsatzbereichBearbeitungAbbrechen()"
           >
-            Löschen
+            Abbrechen
           </button>
 
-        </td>
+        </div>
 
-      </tr>
+      </form>
 
-      </tbody>
+    </div>
 
-    </table>
+    <!-- LISTE DER EINSATZBEREICHE -->
+
+    <div class="einsatzbereich-liste">
+
+      <h3>
+        Vorhandene Einsatzbereiche
+      </h3>
+
+      <p *ngIf="einsatzbereiche.length === 0">
+        Für diese Veranstaltung wurden noch keine
+        Einsatzbereiche angelegt.
+      </p>
+
+      <div
+        class="einsatzbereich-karten"
+        *ngIf="einsatzbereiche.length > 0"
+      >
+
+        <div
+          class="einsatzbereich-karte"
+          *ngFor="let einsatzbereich of einsatzbereiche"
+        >
+
+          <div class="einsatzbereich-info">
+
+            <h4>
+              {{ einsatzbereich.name }}
+            </h4>
+
+            <p *ngIf="einsatzbereich.beschreibung">
+              {{ einsatzbereich.beschreibung }}
+            </p>
+
+            <p
+              class="keine-beschreibung"
+              *ngIf="!einsatzbereich.beschreibung"
+            >
+              Keine Beschreibung vorhanden.
+            </p>
+
+          </div>
+
+          <div class="aktionen">
+
+            <button
+              type="button"
+              class="bearbeiten"
+              (click)="einsatzbereichBearbeitenStarten(einsatzbereich)"
+            >
+              Bearbeiten
+            </button>
+
+            <button
+              type="button"
+              class="loeschen"
+              (click)="einsatzbereichLoeschen(einsatzbereich.id)"
+            >
+              Löschen
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </section>
 

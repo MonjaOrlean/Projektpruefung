@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/schicht-zuweisungen")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://tauri.localhost"})
 public class SchichtZuweisungController {
 
     private final SchichtZuweisungService schichtZuweisungService;
@@ -127,7 +127,7 @@ public class SchichtZuweisungController {
         if (schicht == null) {
             return ResponseEntity
                     .badRequest()
-                    .body("Die ausgewählte Schicht existiert nicht.");
+                    .body("Die ausgewÃ¤hlte Schicht existiert nicht.");
         }
 
         Mitglied mitglied = mitgliedService
@@ -137,7 +137,7 @@ public class SchichtZuweisungController {
         if (mitglied == null) {
             return ResponseEntity
                     .badRequest()
-                    .body("Das ausgewählte Mitglied existiert nicht.");
+                    .body("Das ausgewÃ¤hlte Mitglied existiert nicht.");
         }
 
         if (schichtZuweisungService.zuweisungExistiert(
@@ -155,7 +155,7 @@ public class SchichtZuweisungController {
         )) {
             return ResponseEntity
                     .badRequest()
-                    .body("Das Mitglied ist für diese Schicht nicht vollständig verfügbar.");
+                    .body("Das Mitglied ist fÃ¼r diese Schicht nicht vollstÃ¤ndig verfÃ¼gbar.");
         }
 
         if (schichtZuweisungService.hatDoppelbelegung(

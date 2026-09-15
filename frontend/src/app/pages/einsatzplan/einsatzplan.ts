@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { EinsatzplanSchicht } from '../../models/einsatzplan-schicht';
 import { EinsatzplanService } from '../../services/einsatzplan.service';
@@ -14,7 +15,8 @@ import { EinsatzplanService } from '../../services/einsatzplan.service';
   selector: 'app-einsatzplan',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule
   ],
   templateUrl: './einsatzplan.html',
   styleUrl: './einsatzplan.scss'
@@ -29,7 +31,11 @@ export class Einsatzplan implements OnInit {
 
   schichten: EinsatzplanSchicht[] = [];
 
+  ausgewaehlteVeranstaltung = '';
+
   fehlermeldung = '';
+
+  erfolgsmeldung = '';
 
   wirdGeladen = false;
 
@@ -42,6 +48,7 @@ export class Einsatzplan implements OnInit {
   einsatzplanLaden(): void {
 
     this.fehlermeldung = '';
+    this.erfolgsmeldung = '';
     this.wirdGeladen = true;
 
     this.cdr.markForCheck();
@@ -49,14 +56,19 @@ export class Einsatzplan implements OnInit {
     this.einsatzplanService
       .einsatzplanLaden()
       .subscribe({
+
         next: (daten) => {
 
-          console.log(
-            'Einsatzplan geladen:',
-            daten
-          );
-
           this.schichten = daten;
+
+          if (
+            !this.ausgewaehlteVeranstaltung &&
+            this.veranstaltungen.length > 0
+          ) {
+
+            this.ausgewaehlteVeranstaltung =
+              this.veranstaltungen[0];
+          }
 
           this.wirdGeladen = false;
 
@@ -80,9 +92,159 @@ export class Einsatzplan implements OnInit {
       });
   }
 
+  get veranstaltungen(): string[] {
+
+    return [
+      ...new Set(
+        this.schichten
+          .map(
+            schicht =>
+              schicht.veranstaltungName
+          )
+          .filter(
+            (name): name is string =>
+              !!name
+          )
+      )
+    ].sort();
+  }
+
+  get gefilterteSchichten(): EinsatzplanSchicht[] {
+
+    if (!this.ausgewaehlteVeranstaltung) {
+      return [];
+    }
+
+    return this.schichten.filter(
+      schicht =>
+        schicht.veranstaltungName ===
+        this.ausgewaehlteVeranstaltung
+    );
+  }
+
+  get einsatzbereiche(): string[] {
+
+    return [
+      ...new Set(
+        this.gefilterteSchichten.map(
+          schicht =>
+            schicht.einsatzbereichName ||
+            'Ohne Einsatzbereich'
+        )
+      )
+    ].sort();
+  }
+
+  get mitglieder(): string[] {
+
+    const namen =
+      new Set<string>();
+
+    for (
+      const schicht of
+      this.gefilterteSchichten
+      ) {
+
+      for (
+        const mitglied of
+        schicht.mitglieder
+        ) {
+
+        namen.add(mitglied);
+      }
+    }
+
+    return Array
+      .from(namen)
+      .sort();
+  }
+
+  schichtenFuerMitgliedUndBereich(
+    mitglied: string,
+    einsatzbereich: string
+  ): EinsatzplanSchicht[] {
+
+    return this.gefilterteSchichten.filter(
+      schicht => {
+
+        const bereich =
+          schicht.einsatzbereichName ||
+          'Ohne Einsatzbereich';
+
+        return (
+          bereich === einsatzbereich &&
+          schicht.mitglieder.includes(
+            mitglied
+          )
+        );
+      }
+    );
+  }
+
+  hatKonflikt(
+    mitglied: string,
+    aktuelleSchicht: EinsatzplanSchicht
+  ): boolean {
+
+    const andereSchichten =
+      this.gefilterteSchichten.filter(
+        schicht =>
+          schicht.schichtId !==
+          aktuelleSchicht.schichtId &&
+          schicht.mitglieder.includes(
+            mitglied
+          ) &&
+          schicht.datum ===
+          aktuelleSchicht.datum
+      );
+
+    return andereSchichten.some(
+      andere =>
+        aktuelleSchicht.startzeit <
+        andere.endzeit &&
+        aktuelleSchicht.endzeit >
+        andere.startzeit
+    );
+  }
+
+  statusKlasse(
+    schicht: EinsatzplanSchicht
+  ): string {
+
+    if (
+      schicht.zugewiesenePersonen === 0
+    ) {
+      return 'besetzung-fehlt';
+    }
+
+    if (schicht.unterbesetzt) {
+      return 'besetzung-teilweise';
+    }
+
+    return 'besetzung-voll';
+  }
+
+  statusText(
+    schicht: EinsatzplanSchicht
+  ): string {
+
+    if (
+      schicht.zugewiesenePersonen === 0
+    ) {
+      return '✕ Nicht besetzt';
+    }
+
+    if (schicht.unterbesetzt) {
+      return '⚠ Unterbesetzt';
+    }
+
+    return '✓ Vollständig besetzt';
+  }
+
   einsatzplanExportieren(): void {
 
     this.fehlermeldung = '';
+    this.erfolgsmeldung = '';
     this.wirdExportiert = true;
 
     this.cdr.markForCheck();
@@ -90,30 +252,17 @@ export class Einsatzplan implements OnInit {
     this.einsatzplanService
       .einsatzplanExportieren()
       .subscribe({
-        next: (datei) => {
 
-          const url =
-            window.URL.createObjectURL(datei);
+        next: (dateipfad) => {
 
-          const link =
-            document.createElement('a');
+          console.log(
+            'Einsatzplan exportiert:',
+            dateipfad
+          );
 
-          link.href = url;
-
-          const heute = new Date()
-            .toISOString()
-            .slice(0, 10);
-
-          link.download =
-            `einsatzplan_${heute}.csv`;
-
-          document.body.appendChild(link);
-
-          link.click();
-
-          document.body.removeChild(link);
-
-          window.URL.revokeObjectURL(url);
+          this.erfolgsmeldung =
+            '✓ Einsatzplan wurde erfolgreich gespeichert: ' +
+            dateipfad;
 
           this.wirdExportiert = false;
 

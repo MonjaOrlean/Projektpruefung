@@ -60,7 +60,7 @@ public class EinsatzplanService {
             }
 
             int zugewiesenePersonen =
-                    zuweisungen.size();
+                    mitglieder.size();
 
             int fehlendePersonen =
                     Math.max(
@@ -76,8 +76,17 @@ public class EinsatzplanService {
             String veranstaltungName = null;
 
             if (schicht.getVeranstaltung() != null) {
+
                 veranstaltungName =
                         schicht.getVeranstaltung().getName();
+            }
+
+            String einsatzbereichName = null;
+
+            if (schicht.getEinsatzbereich() != null) {
+
+                einsatzbereichName =
+                        schicht.getEinsatzbereich().getName();
             }
 
             EinsatzplanSchichtDto dto =
@@ -88,6 +97,7 @@ public class EinsatzplanService {
                             schicht.getStartzeit(),
                             schicht.getEndzeit(),
                             veranstaltungName,
+                            einsatzbereichName,
                             schicht.getBenoetigtePersonen(),
                             zugewiesenePersonen,
                             fehlendePersonen,

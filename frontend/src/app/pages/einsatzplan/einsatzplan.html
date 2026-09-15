@@ -3,11 +3,14 @@
   <div class="seiten-kopf">
 
     <div>
+
       <h1>Einsatzplan</h1>
 
       <p class="einleitung">
-        Übersicht aller geplanten Schichten mit Besetzung und aktuellem Status.
+        Übersicht der geplanten Einsätze nach Veranstaltung,
+        Einsatzbereich und Mitglied.
       </p>
+
     </div>
 
     <button
@@ -16,6 +19,7 @@
       (click)="einsatzplanExportieren()"
       [disabled]="wirdExportiert || schichten.length === 0"
     >
+
       <span *ngIf="!wirdExportiert">
         Einsatzplan exportieren
       </span>
@@ -23,6 +27,7 @@
       <span *ngIf="wirdExportiert">
         Export läuft...
       </span>
+
     </button>
 
   </div>
@@ -33,6 +38,14 @@
   >
     {{ fehlermeldung }}
   </div>
+
+  <div
+    class="erfolgsmeldung"
+    *ngIf="erfolgsmeldung"
+  >
+    {{ erfolgsmeldung }}
+  </div>
+
 
   <div
     class="laden"
@@ -52,146 +65,261 @@
     Es sind aktuell keine Schichten im Einsatzplan vorhanden.
   </p>
 
-  <section
-    class="einsatzplan-liste"
+  <ng-container
     *ngIf="
       !wirdGeladen &&
       schichten.length > 0
     "
   >
 
-    <div
-      class="einsatzplan-karte"
-      *ngFor="let schicht of schichten"
-    >
+    <!-- VERANSTALTUNG AUSWÄHLEN -->
 
-      <div class="karten-kopf">
+    <section class="filter-bereich">
 
-        <div>
-          <h2>
-            {{ schicht.schichtName }}
-          </h2>
+      <label for="veranstaltung">
+        Veranstaltung
+      </label>
 
-          <p class="datum">
-            {{ schicht.datum }}
-          </p>
-        </div>
+      <select
+        id="veranstaltung"
+        name="veranstaltung"
+        [(ngModel)]="ausgewaehlteVeranstaltung"
+      >
 
-        <div
-          class="status"
-          [class.status-warnung]="schicht.unterbesetzt"
-          [class.status-ok]="!schicht.unterbesetzt"
+        <option
+          *ngFor="let veranstaltung of veranstaltungen"
+          [value]="veranstaltung"
         >
-          <span *ngIf="schicht.unterbesetzt">
-            ⚠ Unterbesetzt
-          </span>
+          {{ veranstaltung }}
+        </option>
 
-          <span *ngIf="!schicht.unterbesetzt">
-            ✓ Ausreichend besetzt
-          </span>
-        </div>
+      </select>
 
-      </div>
+    </section>
 
-      <div class="informationen">
+    <!-- MATRIX -->
 
-        <div class="info-block">
-          <span class="info-label">
-            Zeitraum
-          </span>
+    <section class="matrix-bereich">
 
-          <strong>
-            {{ schicht.startzeit }}
-            -
-            {{ schicht.endzeit }}
-          </strong>
-        </div>
+      <h2>
+        Einsatzübersicht
+      </h2>
 
-        <div class="info-block">
-          <span class="info-label">
-            Veranstaltung
-          </span>
-
-          <strong>
-            {{
-              schicht.veranstaltungName ||
-              'Keine Veranstaltung'
-            }}
-          </strong>
-        </div>
-
-        <div class="info-block">
-          <span class="info-label">
-            Benötigt
-          </span>
-
-          <strong>
-            {{ schicht.benoetigtePersonen }}
-          </strong>
-        </div>
-
-        <div class="info-block">
-          <span class="info-label">
-            Zugewiesen
-          </span>
-
-          <strong>
-            {{ schicht.zugewiesenePersonen }}
-          </strong>
-        </div>
-
-        <div class="info-block">
-          <span class="info-label">
-            Fehlend
-          </span>
-
-          <strong>
-            {{ schicht.fehlendePersonen }}
-          </strong>
-        </div>
-
-      </div>
-
-      <div class="mitglieder-bereich">
-
-        <h3>Zugewiesene Mitglieder</h3>
-
-        <p
-          class="keine-mitglieder"
-          *ngIf="schicht.mitglieder.length === 0"
-        >
-          Noch keine Mitglieder zugewiesen.
-        </p>
-
-        <div
-          class="mitglieder-liste"
-          *ngIf="schicht.mitglieder.length > 0"
-        >
-
-          <div
-            class="mitglied"
-            *ngFor="let mitglied of schicht.mitglieder"
-          >
-            {{ mitglied }}
-          </div>
-
-        </div>
-
-      </div>
+      <p
+        class="leer"
+        *ngIf="mitglieder.length === 0"
+      >
+        Für diese Veranstaltung wurden noch keine Mitglieder
+        einer Schicht zugewiesen.
+      </p>
 
       <div
-        class="warnhinweis"
-        *ngIf="schicht.unterbesetzt"
+        class="matrix-container"
+        *ngIf="
+          mitglieder.length > 0 &&
+          einsatzbereiche.length > 0
+        "
       >
-        Für diese Schicht fehlen noch
-        <strong>
-          {{ schicht.fehlendePersonen }}
-        </strong>
-        Person(en).
+
+        <table class="matrix">
+
+          <thead>
+
+          <tr>
+
+            <th class="mitglied-spalte">
+              Mitglied
+            </th>
+
+            <th
+              *ngFor="let einsatzbereich of einsatzbereiche"
+            >
+              {{ einsatzbereich }}
+            </th>
+
+          </tr>
+
+          </thead>
+
+          <tbody>
+
+          <tr
+            *ngFor="let mitglied of mitglieder"
+          >
+
+            <th class="mitglied-name">
+              {{ mitglied }}
+            </th>
+
+            <td
+              *ngFor="let einsatzbereich of einsatzbereiche"
+            >
+
+              <ng-container
+                *ngIf="
+                  schichtenFuerMitgliedUndBereich(
+                    mitglied,
+                    einsatzbereich
+                  ) as zugeordneteSchichten
+                "
+              >
+
+                <span
+                  class="kein-einsatz"
+                  *ngIf="zugeordneteSchichten.length === 0"
+                >
+                  –
+                </span>
+
+                <div
+                  class="matrix-einsatz"
+                  *ngFor="let schicht of zugeordneteSchichten"
+                  [class.konflikt]="hatKonflikt(mitglied, schicht)"
+                >
+
+                  <strong>
+                    {{ schicht.startzeit }}
+                    –
+                    {{ schicht.endzeit }}
+                  </strong>
+
+                  <span class="matrix-schichtname">
+                    {{ schicht.schichtName }}
+                  </span>
+
+                  <span
+                    class="matrix-ok"
+                    *ngIf="!hatKonflikt(mitglied, schicht)"
+                  >
+                    ✓
+                  </span>
+
+                  <span
+                    class="matrix-konflikt"
+                    *ngIf="hatKonflikt(mitglied, schicht)"
+                  >
+                    ⚠ Überschneidung
+                  </span>
+
+                </div>
+
+              </ng-container>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
       </div>
 
-    </div>
+    </section>
 
-  </section>
+    <!-- BESETZUNGSÜBERSICHT -->
+
+    <section class="besetzungs-bereich">
+
+      <h2>
+        Besetzungsstatus
+      </h2>
+
+      <div class="status-legende">
+
+        <span class="legende-voll">
+          ✓ Vollständig besetzt
+        </span>
+
+        <span class="legende-teilweise">
+          ⚠ Unterbesetzt
+        </span>
+
+        <span class="legende-fehlt">
+          ✕ Nicht besetzt
+        </span>
+
+      </div>
+
+      <div class="tabellen-container">
+
+        <table class="besetzungs-tabelle">
+
+          <thead>
+
+          <tr>
+            <th>Einsatzbereich</th>
+            <th>Schicht</th>
+            <th>Datum</th>
+            <th>Zeit</th>
+            <th>Benötigt</th>
+            <th>Zugewiesen</th>
+            <th>Fehlend</th>
+            <th>Status</th>
+          </tr>
+
+          </thead>
+
+          <tbody>
+
+          <tr
+            *ngFor="let schicht of gefilterteSchichten"
+          >
+
+            <td>
+              {{
+                schicht.einsatzbereichName ||
+                'Ohne Einsatzbereich'
+              }}
+            </td>
+
+            <td>
+              {{ schicht.schichtName }}
+            </td>
+
+            <td>
+              {{ schicht.datum }}
+            </td>
+
+            <td>
+              {{ schicht.startzeit }}
+              –
+              {{ schicht.endzeit }}
+            </td>
+
+            <td>
+              {{ schicht.benoetigtePersonen }}
+            </td>
+
+            <td>
+              {{ schicht.zugewiesenePersonen }}
+            </td>
+
+            <td>
+              {{ schicht.fehlendePersonen }}
+            </td>
+
+            <td>
+
+              <span
+                class="besetzungs-status"
+                [ngClass]="statusKlasse(schicht)"
+              >
+                {{ statusText(schicht) }}
+              </span>
+
+            </td>
+
+          </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </ng-container>
 
 </div>

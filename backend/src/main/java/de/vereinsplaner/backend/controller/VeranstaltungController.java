@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/veranstaltungen")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://tauri.localhost"})
 public class VeranstaltungController {
 
     private final VeranstaltungService veranstaltungService;

@@ -9,7 +9,8 @@ import { EinsatzplanSchicht } from '../models/einsatzplan-schicht';
 })
 export class EinsatzplanService {
 
-  private readonly http = inject(HttpClient);
+  private readonly http =
+    inject(HttpClient);
 
   private readonly apiUrl =
     'http://localhost:8080/api/einsatzplan';
@@ -21,12 +22,12 @@ export class EinsatzplanService {
     );
   }
 
-  einsatzplanExportieren(): Observable<Blob> {
+  einsatzplanExportieren(): Observable<string> {
 
     return this.http.get(
       `${this.apiUrl}/export`,
       {
-        responseType: 'blob'
+        responseType: 'text'
       }
     );
   }

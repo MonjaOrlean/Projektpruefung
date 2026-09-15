@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/einsatzbereiche")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://tauri.localhost"})
 public class EinsatzbereichController {
 
     private final EinsatzbereichService einsatzbereichService;

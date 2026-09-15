@@ -18,6 +18,8 @@ public class EinsatzplanSchichtDto {
 
     private String veranstaltungName;
 
+    private String einsatzbereichName;
+
     private int benoetigtePersonen;
 
     private int zugewiesenePersonen;
@@ -38,6 +40,7 @@ public class EinsatzplanSchichtDto {
             LocalTime startzeit,
             LocalTime endzeit,
             String veranstaltungName,
+            String einsatzbereichName,
             int benoetigtePersonen,
             int zugewiesenePersonen,
             int fehlendePersonen,
@@ -50,6 +53,7 @@ public class EinsatzplanSchichtDto {
         this.startzeit = startzeit;
         this.endzeit = endzeit;
         this.veranstaltungName = veranstaltungName;
+        this.einsatzbereichName = einsatzbereichName;
         this.benoetigtePersonen = benoetigtePersonen;
         this.zugewiesenePersonen = zugewiesenePersonen;
         this.fehlendePersonen = fehlendePersonen;
@@ -103,6 +107,14 @@ public class EinsatzplanSchichtDto {
 
     public void setVeranstaltungName(String veranstaltungName) {
         this.veranstaltungName = veranstaltungName;
+    }
+
+    public String getEinsatzbereichName() {
+        return einsatzbereichName;
+    }
+
+    public void setEinsatzbereichName(String einsatzbereichName) {
+        this.einsatzbereichName = einsatzbereichName;
     }
 
     public int getBenoetigtePersonen() {

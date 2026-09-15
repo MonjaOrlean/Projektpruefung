@@ -52,9 +52,9 @@ export class Mitglieder implements OnInit {
       .subscribe({
         next: (daten) => {
 
-          this.mitglieder = daten;
+          this.mitglieder = [...daten];
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -64,7 +64,7 @@ export class Mitglieder implements OnInit {
             fehler
           );
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }
       });
   }
@@ -88,7 +88,7 @@ export class Mitglieder implements OnInit {
 
           this.mitgliederLaden();
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -98,7 +98,7 @@ export class Mitglieder implements OnInit {
             fehler
           );
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }
       });
   }
@@ -111,14 +111,14 @@ export class Mitglieder implements OnInit {
       ...mitglied
     };
 
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   bearbeitungAbbrechen(): void {
 
     this.bearbeitetesMitglied = null;
 
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   mitgliedSpeichern(): void {
@@ -139,7 +139,7 @@ export class Mitglieder implements OnInit {
 
           this.mitgliederLaden();
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -149,7 +149,7 @@ export class Mitglieder implements OnInit {
             fehler
           );
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }
       });
   }
@@ -169,7 +169,7 @@ export class Mitglieder implements OnInit {
 
           this.mitgliederLaden();
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         },
 
         error: (fehler) => {
@@ -179,7 +179,7 @@ export class Mitglieder implements OnInit {
             fehler
           );
 
-          this.cdr.markForCheck();
+          this.cdr.detectChanges();
         }
       });
   }
